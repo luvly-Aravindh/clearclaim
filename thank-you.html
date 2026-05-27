@@ -1,0 +1,761 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>You're Confirmed · Free Valuation Call · ClearClaim</title>
+<meta name="description" content="Your free share valuation call is confirmed. Here's what happens next."/>
+<meta name="robots" content="noindex, follow"/>
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          navy:        '#0A1F3D',
+          'navy-mid':  '#14336A',
+          green:       '#166638',
+          'green-pale':'#EAF5EF',
+          'green-mid': '#1E8A4C',
+          'green-bright': '#5EE89A',
+          gold:        '#B5810A',
+          'gold-pale': '#FDF5E4',
+          cream:       '#F7F6F2',
+          ink:         '#0F1923',
+          muted:       '#647080',
+          'border-c':  '#DDE4EE',
+        },
+        fontFamily: {
+          display: ['Archivo', 'system-ui', 'sans-serif'],
+          body:    ['Archivo', 'system-ui', 'sans-serif'],
+          mono:    ['"JetBrains Mono"', 'monospace'],
+        },
+        maxWidth: {
+          'site': '1240px',
+        },
+        animation: {
+          'ticker-scroll': 'ticker-scroll 55s linear infinite',
+          'badge-in': 'badge-in 0.7s cubic-bezier(0.2,1.2,0.3,1) both',
+          'scale-in': 'scale-in 0.5s cubic-bezier(0.2,1.4,0.3,1) 0.2s both',
+          'hero-in':  'hero-in 0.8s ease 0.15s both',
+          'pulse-dot': 'pulse-dot 2s infinite',
+        },
+        keyframes: {
+          'ticker-scroll': {
+            from: { transform: 'translateX(0)' },
+            to:   { transform: 'translateX(-50%)' },
+          },
+          'badge-in': {
+            from: { opacity: '0', transform: 'translateY(-10px)' },
+            to:   { opacity: '1', transform: 'translateY(0)' },
+          },
+          'scale-in': {
+            from: { transform: 'scale(0)' },
+            to:   { transform: 'scale(1)' },
+          },
+          'hero-in': {
+            from: { opacity: '0', transform: 'translateY(16px)' },
+            to:   { opacity: '1', transform: 'translateY(0)' },
+          },
+          'pulse-dot': {
+            '0%,100%': { opacity: '1' },
+            '50%':     { opacity: '0.35' },
+          },
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  body {
+    font-family: 'Archivo', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-behavior: smooth; }
+
+  /* ─── GLOBAL TYPOGRAPHY ─── */
+  /* All headings → Archivo ExtraBold, tight, navy (match reference image) */
+  body h1, body h2, body h3, body h4, body h5, body h6 {
+    font-family: 'Archivo', system-ui, sans-serif !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+    line-height: 1.05 !important;
+  }
+  body h1, body h2, body h3, body h4, body h5, body h6 {
+    color: #0A1F3D; /* navy — overridable by Tailwind text-* utility */
+  }
+
+  /* Green accent words inside headings — same weight, no italic */
+  h1 .accent, h2 .accent, h3 .accent,
+  h1 .italic, h2 .italic, h3 .italic,
+  h1 .italic-green, h2 .italic-green {
+    color: #166638;
+    font-style: normal !important;
+    font-weight: 800;
+  }
+
+  /* On-dark headings (NRI strip etc.) override navy */
+  .on-dark h1, .on-dark h2, .on-dark h3 { color: #ffffff; }
+  .on-dark .accent, .on-dark .italic { color: #5EE89A; }
+
+  /* Subheadings and paragraphs → 15px Archivo */
+  p,
+  .section-sub,
+  .subheading,
+  .sub {
+    font-family: 'Archivo', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* Div-based pseudo-headings using .font-display utility — match h-tag treatment */
+  .font-display:not(.logo-name):not(nav .font-display):not(footer .font-display) {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  /* Keep logo wordmarks at lighter weight */
+  nav .font-display,
+  footer .font-display,
+  #proof-avatar.font-display {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  /* Keep mono badges/labels untouched (JetBrains Mono via .font-mono) */
+
+  /* Gridlines on NRI strip */
+  .nri-grid::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  /* Single-line headlines that scale down on small screens */
+  .nowrap-headline {
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .nowrap-headline { font-size: clamp(28px, 7vw, 56px) !important; }
+  }
+
+  /* Proof popup transition */
+  .proof-popup {
+    transform: translateX(-120%);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+  }
+  .proof-popup.visible {
+    transform: translateX(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body class="bg-white text-ink overflow-x-hidden">
+
+<!-- ═══ TOP TICKER ═══ -->
+<div class="bg-green text-white py-[9px] overflow-hidden border-b-2 border-white/10" aria-label="Trust indicators">
+  <div class="flex gap-0 whitespace-nowrap animate-ticker-scroll font-mono text-[11px] font-bold tracking-[0.06em] uppercase" aria-hidden="true">
+    <!-- Set 1 -->
+    <span class="inline-flex items-center px-6">1,250+ Clients Served <span class="text-white/45 mx-0 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">₹150+ Crore Identified &amp; Recovered <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Fixed Fees Only. No Percentage Cuts <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Refund Assurance <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Registered Entity with GSTIN <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">25-Person In-House Team <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">One Office. No Subcontracting <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">IEPF Claims &amp; Physical to Demat <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Legal Heir Cases &amp; NRI Recovery <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">No India Travel Required for NRIs <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Agreement Before Documents Move <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">4 Years. 2,500+ Claims Processed <span class="text-white/45 ml-6">»»</span></span>
+    <!-- Set 2 (duplicate for seamless loop) -->
+    <span class="inline-flex items-center px-6">1,250+ Clients Served <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">₹150+ Crore Identified &amp; Recovered <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Fixed Fees Only. No Percentage Cuts <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Refund Assurance <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Registered Entity with GSTIN <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">25-Person In-House Team <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">One Office. No Subcontracting <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">IEPF Claims &amp; Physical to Demat <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Legal Heir Cases &amp; NRI Recovery <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">No India Travel Required for NRIs <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">Agreement Before Documents Move <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">4 Years. 2,500+ Claims Processed <span class="text-white/45 ml-6">»»</span></span>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav class="bg-white border-b border-border-c py-4 px-5 md:px-8 flex justify-between items-center sticky top-0 z-[100]">
+  <a href="https://www.clearclaim.in" class="flex items-center" aria-label="ClearClaim Home">
+    <!--
+      ═══ LOGO OPTIONS — pick ONE by uncommenting ═══
+
+      OPTION 1: Logo image only (RECOMMENDED if your logo image already includes the brand name)
+    -->
+    <img src="./images/base.png"
+         alt="ClearClaim"
+         class="h-10 md:h-16 w-auto"/>
+
+    <!--
+      OPTION 2: Logo image + "ClearClaim" wordmark text beside it
+              (use ONLY if your image is just a mark/icon, not a full logo)
+
+      <img src="REPLACE_WITH_YOUR_LOGO_URL.png" alt="" class="h-9 w-auto"/>
+      <span class="font-display text-[22px] text-navy ml-2.5">ClearClaim</span>
+    -->
+
+    <!--
+      OPTION 3: Text-only wordmark (fallback if no image yet)
+
+      <span class="font-display text-[24px] text-navy">ClearClaim</span>
+    -->
+  </a>
+  <a href="https://www.clearclaim.in/contact" class="font-mono text-[11px] font-bold tracking-[0.08em] uppercase text-muted border-b border-border-c pb-px transition-colors hover:text-green hover:border-green">Need to reschedule? →</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="max-w-site mx-auto px-5 md:px-8 pt-12 md:pt-[52px] pb-8 text-center">
+  <!-- ✅ Pill badge — matches reference design -->
+  <div class="inline-flex items-center gap-3 bg-green-pale/60 border border-green/35 rounded-full pl-3 pr-5 py-2.5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase text-green mb-9 animate-badge-in shadow-[0_1px_2px_rgba(22,102,56,0.04)]">
+    <span class="w-3 h-3 bg-green rounded-full flex-shrink-0 animate-scale-in shadow-[0_0_0_4px_rgba(22,102,56,0.12)]" aria-hidden="true"></span>
+    Your Free Valuation Call Is Confirmed
+  </div>
+
+  <!-- ✅ ONE-LINE HEADLINE -->
+  <h1 class="nowrap-headline font-display text-navy leading-[0.95] tracking-[-0.01em] mb-5 animate-hero-in"
+      style="font-size: clamp(28px, 5.5vw, 80px);">
+    Your Shares Are <br class="hidden sm:block">Being <span class="italic text-green"> Into.</span>
+  </h1>
+
+  <p class="text-base md:text-xl text-muted max-w-[600px] mx-auto mb-12 leading-relaxed animate-hero-in" style="animation-delay:0.3s;">
+    You've started something most families keep putting off. On the call, we'll go through what you have, put a number to it, and tell you which kind of case it is. No pressure after that.
+  </p>
+</section>
+
+<!-- ═══ REMINDER BAR ═══ -->
+<div class="flex items-start gap-[18px] py-2.5 px-5 md:px-9 max-w-[900px] mx-auto my-2.5 rounded-[14px] shadow-[0_8px_20px_rgba(0,0,0,0.1)] border-l-[6px] border-[#ff9800]"
+     style="background: linear-gradient(135deg, #fff3cd, #ffe69c);">
+  <div class="w-[45px] h-[45px] min-w-[45px] bg-[#ff9800] text-white text-2xl font-bold flex items-center justify-center rounded-full" aria-hidden="true">!</div>
+  <p class="text-[15px] md:text-[17px] leading-[1.7] text-[#333] py-2">
+    <strong>Important:</strong> Confirmation has been sent to your WhatsApp and email. If it's not there in 5 minutes, check your spam folder. Still nothing? WhatsApp us at <strong>+91 98765 43210</strong> and we'll sort it out.
+  </p>
+</div>
+
+<!-- ═══ TIMELINE: WHAT HAPPENS NEXT ═══ -->
+<div class="border-t border-border-c">
+  <div class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-[72px]">
+    <div class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 flex items-center gap-2.5">
+      <span class="w-5 h-0.5 bg-green inline-block flex-shrink-0"></span>
+      Full Timeline
+    </div>
+    <h2 class="font-display text-navy leading-none tracking-[-0.01em] mb-3" style="font-size: clamp(40px, 5.5vw, 72px);">
+      What Happens <span class="italic text-green">Next.</span>
+    </h2>
+    <p class="text-[17px] text-muted max-w-[520px] leading-relaxed mb-12">From this moment to the end of your call, here's the complete picture.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border-c border border-border-c">
+      <div class="bg-white p-6 md:p-7 transition-colors hover:bg-green-pale">
+        <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 pb-3 border-b border-border-c">Right Now</div>
+        <div class="font-display text-[26px] text-navy leading-tight mb-2.5">Confirmation Sent.</div>
+        <p class="text-sm text-muted leading-[1.65]">WhatsApp message and email with your call time, how to join, and a short note on what to keep handy. Check spam if it's not there in 5 minutes.</p>
+      </div>
+      <div class="bg-white p-6 md:p-7 transition-colors hover:bg-green-pale">
+        <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 pb-3 border-b border-border-c">24 Hours Before</div>
+        <div class="font-display text-[26px] text-navy leading-tight mb-2.5">Reminder Message.</div>
+        <p class="text-sm text-muted leading-[1.65]">A WhatsApp reminder goes out the evening before. You'll get a short form asking about your certificates so the team can review before the call.</p>
+      </div>
+      <div class="bg-white p-6 md:p-7 transition-colors hover:bg-green-pale">
+        <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 pb-3 border-b border-border-c">On the Call</div>
+        <div class="font-display text-[26px] text-navy leading-tight mb-2.5">Your Valuation.</div>
+        <p class="text-sm text-muted leading-[1.65]">30 minutes. We identify the companies, estimate current market value, and tell you the claim type: IEPF, physical to demat, legal heir, or otherwise.</p>
+      </div>
+      <div class="bg-white p-6 md:p-7 transition-colors hover:bg-green-pale">
+        <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 pb-3 border-b border-border-c">After the Call</div>
+        <div class="font-display text-[26px] text-navy leading-tight mb-2.5">Written Quote.</div>
+        <p class="text-sm text-muted leading-[1.65]">If your case is recoverable, you get a fixed-fee quote in writing. Nothing moves until you agree. No original documents leave your hands before a signed agreement is in place.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PREP CHECKLIST (heading + sub CENTERED, items split LEFT/RIGHT) ═══ -->
+<div class="border-t border-border-c">
+  <div class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-[72px]">
+
+    <!-- ✅ Centered heading + subheading -->
+    <div class="text-center max-w-[720px] mx-auto mb-12 md:mb-16">
+      <div class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 flex items-center justify-center gap-2.5">
+        <span class="w-5 h-0.5 bg-green inline-block flex-shrink-0"></span>
+        Before the Call
+        <span class="w-5 h-0.5 bg-green inline-block flex-shrink-0"></span>
+      </div>
+      <h2 class="font-display text-navy leading-none tracking-[-0.01em] mb-4" style="font-size: clamp(40px, 5.5vw, 72px);">
+        Show Up <span class="italic text-green">Prepared.</span>
+      </h2>
+      <p class="text-[17px] text-muted leading-relaxed">
+        You don't need everything in order. Most clients come with one faded certificate and a rough memory of when it was bought. That's enough to start. Five minutes of prep saves a lot of back and forth on the call.
+      </p>
+    </div>
+
+    <!-- ✅ Items split into LEFT and RIGHT columns -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-0 max-w-[1100px] mx-auto">
+
+      <!-- LEFT column items -->
+      <div class="flex flex-col">
+        <div class="grid grid-cols-[40px_1fr] gap-4 py-5 border-b border-border-c items-start">
+          <div class="font-display text-[30px] text-green leading-none pt-0.5">01</div>
+          <div>
+            <strong class="block text-[15px] font-bold text-navy mb-1">Find your certificates.</strong>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">Physical certificates, old passbooks, dividend warrants — anything with a company name on it. Even one is enough. Don't worry if it's faded or partially illegible.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>Check old files, lockers, or stored documents</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-[40px_1fr] gap-4 py-5 border-b border-border-c items-start">
+          <div class="font-display text-[30px] text-green leading-none pt-0.5">02</div>
+          <div>
+            <strong class="block text-[15px] font-bold text-navy mb-1">Write down the company names.</strong>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">Note the names printed on the certificates. Don't try to look them up first. Bring the name as-is. We trace company mergers and name changes on the call.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>Faded text? A phone photo under good light works</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-[40px_1fr] gap-4 py-5 md:border-b-0 border-b border-border-c items-start">
+          <div class="font-display text-[30px] text-green leading-none pt-0.5">03</div>
+          <div>
+            <strong class="block text-[15px] font-bold text-navy mb-1">Know the rough time period.</strong>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">Roughly when were the shares bought — 1980s, 90s, early 2000s? A decade is fine. No need for exact dates. The certificate print date is usually visible if you look closely.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>Approximate decade is enough to start</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT column items -->
+      <div class="flex flex-col">
+        <div class="grid grid-cols-[40px_1fr] gap-4 py-5 border-b border-border-c items-start">
+          <div class="font-display text-[30px] text-green leading-none pt-0.5">04</div>
+          <div>
+            <strong class="block text-[15px] font-bold text-navy mb-1">Clarify whose name the shares are in.</strong>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">Your name, a parent's name, or a spouse's? If the original shareholder has passed, note whether there was a nomination registered with the company.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>This determines direct claim vs. legal heir case</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-[40px_1fr] gap-4 py-5 border-b border-border-c items-start">
+          <div class="font-display text-[30px] text-green leading-none pt-0.5">05</div>
+          <div>
+            <strong class="block text-[15px] font-bold text-navy mb-1">For NRIs: note your country of residence.</strong>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">This affects documentation requirements and the account type for demat credit. Nothing to prepare in advance — just knowing this on the call helps us give you accurate timelines.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>No India travel required in most NRI cases</span>
+          </div>
+        </div>
+        <!-- Spacer to balance the column visually on desktop -->
+        <div class="hidden md:block flex-1"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CASE STUDIES ═══ -->
+<div class="border-t border-border-c bg-cream">
+  <div class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-[72px]">
+    <div class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 flex items-center gap-2.5">
+      <span class="w-5 h-0.5 bg-green inline-block flex-shrink-0"></span>
+      Recoveries We've Completed
+    </div>
+
+    <!-- ✅ ONE-LINE HEADLINE -->
+    <h2 class="nowrap-headline font-display text-navy leading-none tracking-[-0.01em] mb-3"
+        style="font-size: clamp(28px, 5.5vw, 72px);">
+      Real Cases. <span class="italic text-green">Real Outcomes.</span>
+    </h2>
+    <p class="text-[17px] text-muted max-w-[520px] leading-relaxed mb-12">Three cases from our files. Different situations, different amounts, same result.</p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Case 1 -->
+      <div class="border-[1.5px] border-border-c bg-white flex flex-col transition-all duration-300 hover:border-green hover:-translate-y-1">
+        <div class="bg-navy px-[22px] py-4 flex justify-between items-start">
+          <div>
+            <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-white/60">IEPF Claim</div>
+            <div class="text-white text-[13px] font-semibold mt-1">Bengaluru, Karnataka</div>
+          </div>
+          <div class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green-bright">11 Months</div>
+        </div>
+        <div class="p-[22px] flex-1">
+          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">₹9.2 Lakh</div>
+          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">IT Manager · Physical Certificates from the 1990s</div>
+          <p class="text-sm text-ink leading-[1.7] mb-5">
+            Suresh V. had paper certificates from the 1990s. The shares had already moved to IEPF by the time he contacted us. Every CA he consulted directed him elsewhere. On the free call, we identified the holdings, quoted ₹18,000 across three instalments, and filed the complete IEPF-5 process. Eleven months later, the shares were credited to his demat.
+          </p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">IEPF Claim</span>
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">Physical Certificates</span>
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">Fixed Fee</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case 2 -->
+      <div class="border-[1.5px] border-border-c bg-white flex flex-col transition-all duration-300 hover:border-green hover:-translate-y-1">
+        <div class="bg-navy px-[22px] py-4 flex justify-between items-start">
+          <div>
+            <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-white/60">NRI Recovery</div>
+            <div class="text-white text-[13px] font-semibold mt-1">Austin, Texas — No India Trip</div>
+          </div>
+          <div class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green-bright">13 Months</div>
+        </div>
+        <div class="p-[22px] flex-1">
+          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">₹14 Lakh</div>
+          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">Software Engineer · USA · Inherited Shares</div>
+          <p class="text-sm text-ink leading-[1.7] mb-5">
+            Ananya R. is based in the US and inherited shares she couldn't track or access from abroad. The entire process was handled through WhatsApp, video calls, and a limited Power of Attorney. FEMA compliance was confirmed before a single document moved. Shares were credited to her NRO demat account 13 months later. She did not travel to India.
+          </p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">NRI Recovery</span>
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">FEMA Compliant</span>
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">NRO Demat Credit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Case 3 -->
+      <div class="border-[1.5px] border-border-c bg-white flex flex-col transition-all duration-300 hover:border-green hover:-translate-y-1">
+        <div class="bg-navy px-[22px] py-4 flex justify-between items-start">
+          <div>
+            <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-white/60">Legal Heir Case</div>
+            <div class="text-white text-[13px] font-semibold mt-1">Mumbai · Four Siblings · Three Cities</div>
+          </div>
+          <div class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green-bright">Completed</div>
+        </div>
+        <div class="p-[22px] flex-1">
+          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">₹22 Lakh</div>
+          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">Operations Head · Shares Held Since Father's Passing</div>
+          <p class="text-sm text-ink leading-[1.7] mb-5">
+            Meera K. and three siblings were trying to recover shares after their father passed away. Different cities, no single point of coordination, and three years of inaction. We issued one consolidated checklist for all four, managed the full RTA process, and sent WhatsApp updates at every stage. Completed in full. Three years of waiting, done.
+          </p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">Legal Heir</span>
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">Transmission</span>
+            <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">Multi-Claimant</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mt-9 text-center">
+      <a href="https://www.clearclaim.in/case-study" class="font-mono text-[11px] font-bold tracking-[0.1em] uppercase text-green border-b-2 border-green pb-0.5 transition-opacity hover:opacity-70">Browse all case studies →</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NRI STRIP ═══ -->
+<div class="bg-navy text-white py-14 md:py-[72px] px-5 md:px-8 relative overflow-hidden nri-grid on-dark">
+  <div class="max-w-site mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center relative">
+    <div>
+      <div class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-green-bright mb-[18px] flex items-center gap-2.5">
+        <span class="w-5 h-0.5 bg-green-bright inline-block"></span>
+        For Clients Based Abroad
+      </div>
+
+      <!-- ✅ ONE-LINE HEADLINE -->
+      <h2 class="nowrap-headline font-display text-white leading-none tracking-[-0.01em] mb-5"
+          style="font-size: clamp(28px, 5vw, 68px);">
+        No India Trip <br class="hidden sm:block"><span class="italic text-green-bright">Required.</span>
+      </h2>
+
+      <p class="text-base text-white/70 leading-[1.7] mb-7 max-w-[480px]">
+        If you're joining from the US, UK, UAE, Australia, Singapore, or anywhere else — the process works the same way. WhatsApp, courier, and a limited Power of Attorney cover everything that would otherwise need a physical visit.
+        <strong class="text-white font-semibold">FEMA compliance and NRO/NRE account coordination are built into how we work, not an afterthought.</strong>
+        Most NRI recoveries take 10 to 14 months. The call is the same 30 minutes regardless of where you're dialling from.
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">USA</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">United Kingdom</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">UAE</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">Australia</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">Singapore</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">Canada</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">Germany</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">New Zealand</span>
+        <span class="font-mono text-[10px] font-bold tracking-[0.08em] uppercase text-white/50 bg-white/[0.06] border border-white/10 px-3 py-1.5">+ More</span>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <div class="grid grid-cols-[28px_1fr] gap-4 py-5 border-b border-white/10 items-start">
+        <div class="w-7 h-7 bg-green-bright/15 border border-green-bright/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <svg viewBox="0 0 16 16" fill="none" class="w-3.5 h-3.5"><path d="M8 1.5C4.41 1.5 1.5 4.41 1.5 8S4.41 14.5 8 14.5 14.5 11.59 14.5 8 11.59 1.5 8 1.5z" stroke="#5EE89A" stroke-width="1.5"/><path d="M8 5V8.5L10 10.5" stroke="#5EE89A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="text-[15px] font-semibold text-white mb-1">No physical visits needed</div>
+          <p class="text-[13px] text-white/55 leading-relaxed">Every step — filings, RTA coordination, company correspondence — is handled from our Pune office on your behalf.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-[28px_1fr] gap-4 py-5 border-b border-white/10 items-start">
+        <div class="w-7 h-7 bg-green-bright/15 border border-green-bright/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <svg viewBox="0 0 16 16" fill="none" class="w-3.5 h-3.5"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="#5EE89A" stroke-width="1.5"/><path d="M2 6H14" stroke="#5EE89A" stroke-width="1.5"/><path d="M6 9.5H10" stroke="#5EE89A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="text-[15px] font-semibold text-white mb-1">FEMA compliance confirmed upfront</div>
+          <p class="text-[13px] text-white/55 leading-relaxed">We review FEMA requirements and NRO/NRE account eligibility on the free call, before any process begins.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-[28px_1fr] gap-4 py-5 border-b border-white/10 items-start">
+        <div class="w-7 h-7 bg-green-bright/15 border border-green-bright/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <svg viewBox="0 0 16 16" fill="none" class="w-3.5 h-3.5"><path d="M3 8L6.5 11.5L13 5" stroke="#5EE89A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="text-[15px] font-semibold text-white mb-1">Limited PoA covers everything</div>
+          <p class="text-[13px] text-white/55 leading-relaxed">A limited Power of Attorney — couriered, signed, and returned — is sufficient for the full recovery process in most cases.</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-[28px_1fr] gap-4 py-5 items-start">
+        <div class="w-7 h-7 bg-green-bright/15 border border-green-bright/30 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+          <svg viewBox="0 0 16 16" fill="none" class="w-3.5 h-3.5"><path d="M8 2L8 14M2 8H14" stroke="#5EE89A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="text-[15px] font-semibold text-white mb-1">WhatsApp updates throughout</div>
+          <p class="text-[13px] text-white/55 leading-relaxed">Regular status messages in plain language. No jargon, no chasing — you're informed at every stage that matters.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TRUST TILES ═══ -->
+<div class="bg-cream border-t border-b border-border-c">
+  <div class="max-w-site mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="p-9 px-7 border-r-0 sm:border-r border-b sm:border-b-0 lg:border-b-0 border-border-c">
+      <div class="w-9 h-9 bg-green-pale border border-green/20 rounded-full flex items-center justify-center mb-3.5">
+        <svg viewBox="0 0 20 20" fill="none" class="w-4 h-4"><path d="M10 2L3 5.5V10C3 13.87 6.13 17.36 10 18C13.87 17.36 17 13.87 17 10V5.5L10 2Z" stroke="#166638" stroke-width="1.5"/><path d="M7 10L9.5 12.5L13 8" stroke="#166638" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-green mb-1.5">Registered Entity</div>
+      <div class="font-display text-lg text-navy mb-1.5 leading-tight">ClearClaim Ventures Private Limited</div>
+      <p class="text-[13px] text-muted leading-relaxed">Verified GSTIN. Registered and operating from Pune, Maharashtra since 2021.</p>
+    </div>
+    <div class="p-9 px-7 sm:border-r-0 lg:border-r border-b sm:border-b-0 lg:border-b-0 border-border-c">
+      <div class="w-9 h-9 bg-green-pale border border-green/20 rounded-full flex items-center justify-center mb-3.5">
+        <svg viewBox="0 0 20 20" fill="none" class="w-4 h-4"><rect x="3" y="4" width="14" height="12" rx="1.5" stroke="#166638" stroke-width="1.5"/><path d="M7 4V3M13 4V3M3 8H17" stroke="#166638" stroke-width="1.5" stroke-linecap="round"/><path d="M7 12H13" stroke="#166638" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-green mb-1.5">Fixed Fee Policy</div>
+      <div class="font-display text-lg text-navy mb-1.5 leading-tight">No Percentage Commission</div>
+      <p class="text-[13px] text-muted leading-relaxed">Your fee is based on case complexity, not on what your family recovers. Written and agreed upfront.</p>
+    </div>
+    <div class="p-9 px-7 sm:border-r border-b sm:border-b-0 border-border-c">
+      <div class="w-9 h-9 bg-green-pale border border-green/20 rounded-full flex items-center justify-center mb-3.5">
+        <svg viewBox="0 0 20 20" fill="none" class="w-4 h-4"><circle cx="10" cy="10" r="7" stroke="#166638" stroke-width="1.5"/><path d="M10 7V10.5L12.5 13" stroke="#166638" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-green mb-1.5">Milestone Payments</div>
+      <div class="font-display text-lg text-navy mb-1.5 leading-tight">Pay in Verified Stages</div>
+      <p class="text-[13px] text-muted leading-relaxed">Payments are tied to confirmed progress milestones. Not one bulk amount upfront. Not half-and-half.</p>
+    </div>
+    <div class="p-9 px-7">
+      <div class="w-9 h-9 bg-green-pale border border-green/20 rounded-full flex items-center justify-center mb-3.5">
+        <svg viewBox="0 0 20 20" fill="none" class="w-4 h-4"><path d="M16 8C16 12.418 10 17 10 17C10 17 4 12.418 4 8C4 4.686 6.686 2 10 2C13.314 2 16 4.686 16 8Z" stroke="#166638" stroke-width="1.5"/><circle cx="10" cy="8" r="2" stroke="#166638" stroke-width="1.5"/></svg>
+      </div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-green mb-1.5">Outcome Assurance</div>
+      <div class="font-display text-lg text-navy mb-1.5 leading-tight">Refund Policy in Writing</div>
+      <p class="text-[13px] text-muted leading-relaxed">Refund is applicable if recovery is not completed after the full process has been run on your case.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="bg-navy text-white pt-14 px-5 md:px-8 pb-8">
+
+  <!-- ✅ Footer logo CENTERED -->
+  <div class="max-w-site mx-auto flex flex-col items-center gap-5 pb-8 border-b border-white/10">
+    <a href="https://www.clearclaim.in" class="flex items-center" aria-label="ClearClaim Home">
+      <!--
+        ═══ FOOTER LOGO OPTIONS — pick ONE by uncommenting ═══
+
+        OPTION 1: Logo image, inverted to white for dark footer (RECOMMENDED for dark logos)
+                  `brightness-0 invert` turns ANY logo pure white.
+                  Remove those two classes if your logo is already white/light.
+      -->
+     <img src="./images/base.png"
+     alt="ClearClaim"
+     class="h-14 w-auto brightness-100" />
+
+      
+    </a>
+    <a href="https://www.clearclaim.in/contact" class="font-mono text-[10px] font-bold tracking-[0.12em] uppercase text-white/50 border border-white/15 px-4 py-2.5 transition-colors hover:text-white hover:border-white/40">Need to reschedule? →</a>
+  </div>
+
+  <div class="max-w-site mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 py-10 border-b border-white/10">
+    <div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 mb-4">The Company</div>
+      <ul class="flex flex-col gap-2.5 list-none">
+        <li><a href="https://www.clearclaim.in/" class="text-sm text-white/60 hover:text-white transition-colors">Home</a></li>
+        <li><a href="https://www.clearclaim.in/#how-it-works" class="text-sm text-white/60 hover:text-white transition-colors">How It Works</a></li>
+        <li><a href="https://www.clearclaim.in/case-study" class="text-sm text-white/60 hover:text-white transition-colors">Case Studies</a></li>
+        <li><a href="https://www.clearclaim.in/contact" class="text-sm text-white/60 hover:text-white transition-colors">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 mb-4">Recovery Types</div>
+      <ul class="flex flex-col gap-2.5 list-none">
+        <li><a href="https://www.clearclaim.in/iepfclaim/" class="text-sm text-white/60 hover:text-white transition-colors">IEPF Claims</a></li>
+        <li><a href="https://www.clearclaim.in/" class="text-sm text-white/60 hover:text-white transition-colors">Physical to Demat</a></li>
+        <li><a href="https://www.clearclaim.in/" class="text-sm text-white/60 hover:text-white transition-colors">Legal Heir Cases</a></li>
+        <li><a href="https://www.clearclaim.in/" class="text-sm text-white/60 hover:text-white transition-colors">NRI Recovery</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 mb-4">Client Proof</div>
+      <ul class="flex flex-col gap-2.5 list-none">
+        <li><a href="https://www.clearclaim.in/case-study" class="text-sm text-white/60 hover:text-white transition-colors">Case Studies</a></li>
+        <li><a href="https://g.page/r/clearclaim" target="_blank" rel="noopener" class="text-sm text-white/60 hover:text-white transition-colors">Google Reviews</a></li>
+        <li><a href="https://www.clearclaim.in/#faq" class="text-sm text-white/60 hover:text-white transition-colors">Recovery FAQ</a></li>
+        <li><a href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener" class="text-sm text-white/60 hover:text-white transition-colors">WhatsApp Us</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-mono text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 mb-4">Legal</div>
+      <ul class="flex flex-col gap-2.5 list-none">
+        <li><a href="https://www.clearclaim.in/privacy-policy" class="text-sm text-white/60 hover:text-white transition-colors">Privacy Policy</a></li>
+        <li><a href="https://www.clearclaim.in/terms" class="text-sm text-white/60 hover:text-white transition-colors">Terms of Service</a></li>
+        <li><a href="https://www.clearclaim.in/refund-policy" class="text-sm text-white/60 hover:text-white transition-colors">Refund Policy</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="max-w-site mx-auto pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
+    <span class="font-mono text-[10px] tracking-[0.06em] text-white/30 uppercase text-center md:text-left">�2026 ClearClaim Ventures Private Limited »» Pune, Maharashtra »» All Rights Reserved</span>
+    <span class="font-mono text-[10px] tracking-[0.06em] text-white/30 uppercase">hello@clearclaim.in</span>
+  </div>
+</footer>
+
+<!-- ═══ SOCIAL PROOF POPUP ═══ -->
+<div class="proof-popup fixed bottom-5 left-5 z-[9999] flex items-center gap-3 bg-white border border-border-c rounded-[60px] py-2.5 pl-2.5 pr-5 max-w-[340px] min-w-[260px] shadow-[0_8px_32px_rgba(10,31,61,0.14),0_2px_6px_rgba(10,31,61,0.06)] pointer-events-none"
+     id="proof-popup" role="status" aria-live="polite">
+  <div class="w-11 h-11 rounded-full bg-green-pale border-2 border-green flex items-center justify-center flex-shrink-0 font-display text-lg text-green" id="proof-avatar" aria-hidden="true">S</div>
+  <div class="flex-1 min-w-0">
+    <div class="text-[13px] font-bold text-ink whitespace-nowrap overflow-hidden text-ellipsis leading-tight">
+      <span id="proof-name">Suresh K.</span>
+      <span class="text-muted font-normal"> from </span>
+      <span id="proof-city">Bengaluru, KA</span>
+    </div>
+    <div class="text-xs text-muted whitespace-nowrap overflow-hidden text-ellipsis leading-tight mt-0.5" id="proof-action">Just booked a free valuation call</div>
+    <div class="flex items-center gap-1.5 mt-0.5">
+      <span class="font-mono text-[10px] font-bold text-ink" id="proof-time">3 min ago</span>
+      <svg class="w-3 h-3 flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Z" fill="#2563EB"/>
+        <path d="M8 12.5l2.7 2.7L16.5 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="font-mono text-[10px] font-bold text-[#2563EB]">Verified</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+// TidyCal URL param parsing (kept from original)
+(function () {
+  var p = new URLSearchParams(window.location.search);
+  var rawDate = p.get('starts_at') || p.get('date') || p.get('event_start_time');
+  var name    = p.get('invitee_full_name') || p.get('name') || '';
+  var email   = p.get('invitee_email') || p.get('email') || '';
+
+  if (rawDate) {
+    try {
+      var d = new Date(rawDate);
+      var formatted = d.toLocaleString('en-IN', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+        hour: 'numeric', minute: '2-digit', hour12: true,
+        timeZone: 'Asia/Kolkata'
+      });
+      var el = document.getElementById('apt-datetime');
+      if (el) el.textContent = formatted;
+    } catch (e) {}
+  }
+  var nameEl = document.getElementById('apt-name');
+  var emailEl = document.getElementById('apt-email');
+  if (name && nameEl) nameEl.textContent = name;
+  if (email && emailEl) emailEl.textContent = email;
+})();
+</script>
+
+<script>
+// Social Proof Ticker
+(function () {
+  var popup  = document.getElementById('proof-popup');
+  var avatar = document.getElementById('proof-avatar');
+  var nameEl = document.getElementById('proof-name');
+  var cityEl = document.getElementById('proof-city');
+  var actEl  = document.getElementById('proof-action');
+  var timeEl = document.getElementById('proof-time');
+  if (!popup) return;
+
+  var FIRST = ['Suresh','Meera','Ananya','Rajesh','Kavitha','Sanjay','Priya','Harish','Nandini','Kiran','Ramesh','Lakshmi','Vikram','Deepa','Anil','Sunita','Rohit','Neha','Srinivas','Padma','Arjun','Girish','Usha','Mohan','Rekha','Ganesh','Poornima','Balaji','Shanthi','Vivek','Madhavi','Rajan'];
+  var LAST  = ['K.','M.','R.','S.','V.','N.','P.','B.','G.','A.','T.','L.'];
+  var CITIES= ['Bengaluru, KA','Mumbai, MH','Chennai, TN','Pune, MH','Hyderabad, TS','New Delhi, DL','Kochi, KL','Ahmedabad, GJ','Coimbatore, TN','Kolkata, WB','Austin, TX','San Jose, CA','Dubai, UAE','London, UK','Singapore, SG','Melbourne, AU','Toronto, ON','Sharjah, UAE','Manchester, UK','Mysuru, KA','Lucknow, UP','Nagpur, MH'];
+  var ACTIONS = [
+    'Just booked a free valuation call',
+    'Certificate identified — process started',
+    'IEPF claim submitted successfully',
+    'Legal heir documentation completed',
+    'Physical shares converted to demat',
+    'Free valuation call completed',
+    'NRI recovery handled without India visit',
+    'Shares credited to demat account'
+  ];
+  var TIMES = ['2 min ago','4 min ago','6 min ago','9 min ago','14 min ago','18 min ago','23 min ago','31 min ago','38 min ago'];
+
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function weekSeed() {
+    var d = new Date(), ys = new Date(d.getFullYear(), 0, 1);
+    var doy = Math.floor((d - ys) / 86400000);
+    return d.getFullYear() * 100 + Math.floor(doy / 7);
+  }
+  var rand = mulberry32(weekSeed());
+  function pick(arr) { return arr[Math.floor(rand() * arr.length)]; }
+
+  function showNext() {
+    var first   = pick(FIRST);
+    var fullName= first + ' ' + pick(LAST);
+    var city    = pick(CITIES);
+    var action  = pick(ACTIONS);
+    var time    = pick(TIMES);
+
+    nameEl.textContent = fullName;
+    cityEl.textContent = city;
+    actEl.textContent  = action;
+    timeEl.textContent = time;
+    avatar.textContent = first.charAt(0);
+
+    popup.classList.add('visible');
+    setTimeout(function () { popup.classList.remove('visible'); }, 6000);
+  }
+
+  setTimeout(function () {
+    showNext();
+    setInterval(showNext, 11000);
+  }, 4000);
+})();
+</script>
+
+</body>
+</html>
