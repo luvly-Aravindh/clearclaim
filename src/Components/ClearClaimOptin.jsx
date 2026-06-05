@@ -4,11 +4,6 @@ import { saveLead } from "./ccLead";
 import ccMark from "../assets/clearclaim-mark.png";
 import ccWordmark from "../assets/clearclaim-wordmark.png";
 
-/* Optional: set this to a real endpoint to capture the opt-in lead the
-   moment email + WhatsApp are submitted (before the booking step). Left
-   empty so nothing fires until a real URL is wired in. The full lead,
-   including name and case type, is still captured server-side at the
-   booking step inside BookModal. */
 const OPTIN_WEBHOOK_URL = "";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -75,10 +70,11 @@ const ClearClaimOptin = ({ onComplete }) => {
       {/* ============ NAV ============ */}
       <nav className="sticky top-0 z-50 border-b border-[#D8E5DC] py-4 bg-[rgba(250,250,247,0.94)] backdrop-blur-[12px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-8 flex items-center justify-between gap-4">
-          <a href="#" className="inline-flex items-center gap-2.5 font-extrabold text-[#00BE5E] text-[19px]">
-            <img src={ccMark} alt="ClearClaim" className="w-[38px] h-[38px] block shrink-0" />
-            <span>ClearClaim</span>
-          </a>
+  <img
+    src="https://www.clearclaim.in/_next/static/media/logo.0..s._s9yl8ut.png"
+    alt="ClearClaim"
+    className="h-10 md:h-12 w-auto"
+  />
           <div className="cc-mono inline-flex items-center gap-2 md:gap-3.5 text-[10px] md:text-[11px] font-bold tracking-[0.16em] text-[#5F6E66]">
             <span className="w-[5px] h-[5px] rounded-full bg-[#00BE5E]" />
             <span>FREE DOWNLOAD</span>
