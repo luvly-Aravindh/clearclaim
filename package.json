@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://getnos.io/clearclaim-lp/",
+  "homepage": "https://oldshares.clearclaim.in/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
