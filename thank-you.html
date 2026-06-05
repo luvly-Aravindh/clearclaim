@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>You're Confirmed · Free Valuation Call · ClearClaim</title>
+<title>You're Confirmed Â· Free Valuation Call Â· ClearClaim</title>
 <meta name="description" content="Your free share valuation call is confirmed. Here's what happens next."/>
 <meta name="robots" content="noindex, follow"/>
 
@@ -84,8 +84,8 @@
   }
   html { scroll-behavior: smooth; }
 
-  /* ─── GLOBAL TYPOGRAPHY ─── */
-  /* All headings → Archivo ExtraBold, tight, navy (match reference image) */
+  /* â”€â”€â”€ GLOBAL TYPOGRAPHY â”€â”€â”€ */
+  /* All headings â†’ Archivo ExtraBold, tight, navy (match reference image) */
   body h1, body h2, body h3, body h4, body h5, body h6 {
     font-family: 'Archivo', system-ui, sans-serif !important;
     font-weight: 800 !important;
@@ -93,10 +93,10 @@
     line-height: 1.05 !important;
   }
   body h1, body h2, body h3, body h4, body h5, body h6 {
-    color: #0A1F3D; /* navy — overridable by Tailwind text-* utility */
+    color: #0A1F3D; /* navy â€” overridable by Tailwind text-* utility */
   }
 
-  /* Green accent words inside headings — same weight, no italic */
+  /* Green accent words inside headings â€” same weight, no italic */
   h1 .accent, h2 .accent, h3 .accent,
   h1 .italic, h2 .italic, h3 .italic,
   h1 .italic-green, h2 .italic-green {
@@ -109,7 +109,7 @@
   .on-dark h1, .on-dark h2, .on-dark h3 { color: #ffffff; }
   .on-dark .accent, .on-dark .italic { color: #5EE89A; }
 
-  /* Subheadings and paragraphs → 15px Archivo */
+  /* Subheadings and paragraphs â†’ 15px Archivo */
   p,
   .section-sub,
   .subheading,
@@ -119,7 +119,7 @@
     line-height: 1.65;
   }
 
-  /* Div-based pseudo-headings using .font-display utility — match h-tag treatment */
+  /* Div-based pseudo-headings using .font-display utility â€” match h-tag treatment */
   .font-display:not(.logo-name):not(nav .font-display):not(footer .font-display) {
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -150,8 +150,21 @@
   .nowrap-headline {
     white-space: nowrap;
   }
-  @media (max-width: 640px) {
-    .nowrap-headline { font-size: clamp(28px, 7vw, 56px) !important; }
+  /* â”€â”€â”€ MOBILE / TABLET HEADINGS â”€â”€â”€
+     On phones & tablets, the big single-line headlines were forced onto one
+     line (white-space:nowrap) and got clipped by the page's overflow-x-hidden.
+     Here we let them wrap and scale every large display heading down to fit.
+     Desktop (>= 769px) keeps the original one-line design entirely. */
+  @media (max-width: 768px) {
+    .nowrap-headline {
+      white-space: normal !important;
+      overflow-wrap: anywhere;
+    }
+    h1.font-display,
+    h2.font-display {
+      font-size: clamp(26px, 6.8vw, 44px) !important;
+      line-height: 1.14 !important;
+    }
   }
 
   /* Proof popup transition */
@@ -190,43 +203,43 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
 </head>
 <body class="bg-white text-ink overflow-x-hidden">
 
-<!-- ═══ TOP TICKER ═══ -->
+<!-- â•â•â• TOP TICKER â•â•â• -->
 <div class="bg-green text-white py-[9px] overflow-hidden border-b-2 border-white/10" aria-label="Trust indicators">
   <div class="flex gap-0 whitespace-nowrap animate-ticker-scroll font-mono text-[11px] font-bold tracking-[0.06em] uppercase" aria-hidden="true">
     <!-- Set 1 -->
-    <span class="inline-flex items-center px-6">1,250+ Clients Served <span class="text-white/45 mx-0 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">₹150+ Crore Identified &amp; Recovered <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Fixed Fees Only. No Percentage Cuts <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Refund Assurance <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Registered Entity with GSTIN <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">25-Person In-House Team <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">One Office. No Subcontracting <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">IEPF Claims &amp; Physical to Demat <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Legal Heir Cases &amp; NRI Recovery <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">No India Travel Required for NRIs <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Agreement Before Documents Move <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">4 Years. 2,500+ Claims Processed <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">1,250+ Clients Served <span class="text-white/45 mx-0 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">â‚¹150+ Crore Identified &amp; Recovered <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Fixed Fees Only. No Percentage Cuts <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Refund Assurance <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Registered Entity with GSTIN <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">25-Person In-House Team <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">One Office. No Subcontracting <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">IEPF Claims &amp; Physical to Demat <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Legal Heir Cases &amp; NRI Recovery <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">No India Travel Required for NRIs <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Agreement Before Documents Move <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">4 Years. 2,500+ Claims Processed <span class="text-white/45 ml-6">Â»Â»</span></span>
     <!-- Set 2 (duplicate for seamless loop) -->
-    <span class="inline-flex items-center px-6">1,250+ Clients Served <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">₹150+ Crore Identified &amp; Recovered <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Fixed Fees Only. No Percentage Cuts <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Refund Assurance <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Registered Entity with GSTIN <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">25-Person In-House Team <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">One Office. No Subcontracting <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">IEPF Claims &amp; Physical to Demat <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Legal Heir Cases &amp; NRI Recovery <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">No India Travel Required for NRIs <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">Agreement Before Documents Move <span class="text-white/45 ml-6">»»</span></span>
-    <span class="inline-flex items-center px-6">4 Years. 2,500+ Claims Processed <span class="text-white/45 ml-6">»»</span></span>
+    <span class="inline-flex items-center px-6">1,250+ Clients Served <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">â‚¹150+ Crore Identified &amp; Recovered <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Fixed Fees Only. No Percentage Cuts <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Refund Assurance <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Registered Entity with GSTIN <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">25-Person In-House Team <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">One Office. No Subcontracting <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">IEPF Claims &amp; Physical to Demat <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Legal Heir Cases &amp; NRI Recovery <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">No India Travel Required for NRIs <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">Agreement Before Documents Move <span class="text-white/45 ml-6">Â»Â»</span></span>
+    <span class="inline-flex items-center px-6">4 Years. 2,500+ Claims Processed <span class="text-white/45 ml-6">Â»Â»</span></span>
   </div>
 </div>
 
-<!-- ═══ NAV ═══ -->
+<!-- â•â•â• NAV â•â•â• -->
 <nav class="bg-white border-b border-border-c py-4 px-5 md:px-8 flex justify-between items-center sticky top-0 z-[100]">
   <a href="https://www.clearclaim.in" class="flex items-center" aria-label="ClearClaim Home">
     <!--
-      ═══ LOGO OPTIONS — pick ONE by uncommenting ═══
+      â•â•â• LOGO OPTIONS â€” pick ONE by uncommenting â•â•â•
 
       OPTION 1: Logo image only (RECOMMENDED if your logo image already includes the brand name)
     -->
@@ -248,18 +261,18 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
       <span class="font-display text-[24px] text-navy">ClearClaim</span>
     -->
   </a>
-  <a href="https://www.clearclaim.in/contact" class="font-mono text-[11px] font-bold tracking-[0.08em] uppercase text-muted border-b border-border-c pb-px transition-colors hover:text-green hover:border-green">Need to reschedule? →</a>
+  <a href="https://www.clearclaim.in/contact" class="font-mono text-[11px] font-bold tracking-[0.08em] uppercase text-muted border-b border-border-c pb-px transition-colors hover:text-green hover:border-green">Need to reschedule? â†’</a>
 </nav>
 
-<!-- ═══ HERO ═══ -->
+<!-- â•â•â• HERO â•â•â• -->
 <section class="max-w-site mx-auto px-5 md:px-8 pt-12 md:pt-[52px] pb-8 text-center">
-  <!-- ✅ Pill badge — matches reference design -->
+  <!-- âœ… Pill badge â€” matches reference design -->
   <div class="inline-flex items-center gap-3 bg-green-pale/60 border border-green/35 rounded-full pl-3 pr-5 py-2.5 font-mono text-[11px] font-bold tracking-[0.16em] uppercase text-green mb-9 animate-badge-in shadow-[0_1px_2px_rgba(22,102,56,0.04)]">
     <span class="w-3 h-3 bg-green rounded-full flex-shrink-0 animate-scale-in shadow-[0_0_0_4px_rgba(22,102,56,0.12)]" aria-hidden="true"></span>
     Your Free Valuation Call Is Confirmed
   </div>
 
-  <!-- ✅ ONE-LINE HEADLINE -->
+  <!-- âœ… ONE-LINE HEADLINE -->
   <h1 class="nowrap-headline font-display text-navy leading-[0.95] tracking-[-0.01em] mb-5 animate-hero-in"
       style="font-size: clamp(28px, 5.5vw, 80px);">
     Your Shares Are <br class="hidden sm:block">Being <span class="italic text-green"> Into.</span>
@@ -270,7 +283,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   </p>
 </section>
 
-<!-- ═══ REMINDER BAR ═══ -->
+<!-- â•â•â• REMINDER BAR â•â•â• -->
 <div class="flex items-start gap-[18px] py-2.5 px-5 md:px-9 max-w-[900px] mx-auto my-2.5 rounded-[14px] shadow-[0_8px_20px_rgba(0,0,0,0.1)] border-l-[6px] border-[#ff9800]"
      style="background: linear-gradient(135deg, #fff3cd, #ffe69c);">
   <div class="w-[45px] h-[45px] min-w-[45px] bg-[#ff9800] text-white text-2xl font-bold flex items-center justify-center rounded-full" aria-hidden="true">!</div>
@@ -279,7 +292,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   </p>
 </div>
 
-<!-- ═══ TIMELINE: WHAT HAPPENS NEXT ═══ -->
+<!-- â•â•â• TIMELINE: WHAT HAPPENS NEXT â•â•â• -->
 <div class="border-t border-border-c">
   <div class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-[72px]">
     <div class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 flex items-center gap-2.5">
@@ -316,11 +329,11 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   </div>
 </div>
 
-<!-- ═══ PREP CHECKLIST (heading + sub CENTERED, items split LEFT/RIGHT) ═══ -->
+<!-- â•â•â• PREP CHECKLIST (heading + sub CENTERED, items split LEFT/RIGHT) â•â•â• -->
 <div class="border-t border-border-c">
   <div class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-[72px]">
 
-    <!-- ✅ Centered heading + subheading -->
+    <!-- âœ… Centered heading + subheading -->
     <div class="text-center max-w-[720px] mx-auto mb-12 md:mb-16">
       <div class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 flex items-center justify-center gap-2.5">
         <span class="w-5 h-0.5 bg-green inline-block flex-shrink-0"></span>
@@ -335,7 +348,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
       </p>
     </div>
 
-    <!-- ✅ Items split into LEFT and RIGHT columns -->
+    <!-- âœ… Items split into LEFT and RIGHT columns -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-0 max-w-[1100px] mx-auto">
 
       <!-- LEFT column items -->
@@ -344,8 +357,8 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
           <div class="font-display text-[30px] text-green leading-none pt-0.5">01</div>
           <div>
             <strong class="block text-[15px] font-bold text-navy mb-1">Find your certificates.</strong>
-            <p class="text-sm text-muted leading-relaxed mb-1.5">Physical certificates, old passbooks, dividend warrants — anything with a company name on it. Even one is enough. Don't worry if it's faded or partially illegible.</p>
-            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>Check old files, lockers, or stored documents</span>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">Physical certificates, old passbooks, dividend warrants â€” anything with a company name on it. Even one is enough. Don't worry if it's faded or partially illegible.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>â†’</span>Check old files, lockers, or stored documents</span>
           </div>
         </div>
         <div class="grid grid-cols-[40px_1fr] gap-4 py-5 border-b border-border-c items-start">
@@ -353,15 +366,15 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
           <div>
             <strong class="block text-[15px] font-bold text-navy mb-1">Write down the company names.</strong>
             <p class="text-sm text-muted leading-relaxed mb-1.5">Note the names printed on the certificates. Don't try to look them up first. Bring the name as-is. We trace company mergers and name changes on the call.</p>
-            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>Faded text? A phone photo under good light works</span>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>â†’</span>Faded text? A phone photo under good light works</span>
           </div>
         </div>
         <div class="grid grid-cols-[40px_1fr] gap-4 py-5 md:border-b-0 border-b border-border-c items-start">
           <div class="font-display text-[30px] text-green leading-none pt-0.5">03</div>
           <div>
             <strong class="block text-[15px] font-bold text-navy mb-1">Know the rough time period.</strong>
-            <p class="text-sm text-muted leading-relaxed mb-1.5">Roughly when were the shares bought — 1980s, 90s, early 2000s? A decade is fine. No need for exact dates. The certificate print date is usually visible if you look closely.</p>
-            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>Approximate decade is enough to start</span>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">Roughly when were the shares bought â€” 1980s, 90s, early 2000s? A decade is fine. No need for exact dates. The certificate print date is usually visible if you look closely.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>â†’</span>Approximate decade is enough to start</span>
           </div>
         </div>
       </div>
@@ -373,15 +386,15 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
           <div>
             <strong class="block text-[15px] font-bold text-navy mb-1">Clarify whose name the shares are in.</strong>
             <p class="text-sm text-muted leading-relaxed mb-1.5">Your name, a parent's name, or a spouse's? If the original shareholder has passed, note whether there was a nomination registered with the company.</p>
-            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>This determines direct claim vs. legal heir case</span>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>â†’</span>This determines direct claim vs. legal heir case</span>
           </div>
         </div>
         <div class="grid grid-cols-[40px_1fr] gap-4 py-5 border-b border-border-c items-start">
           <div class="font-display text-[30px] text-green leading-none pt-0.5">05</div>
           <div>
             <strong class="block text-[15px] font-bold text-navy mb-1">For NRIs: note your country of residence.</strong>
-            <p class="text-sm text-muted leading-relaxed mb-1.5">This affects documentation requirements and the account type for demat credit. Nothing to prepare in advance — just knowing this on the call helps us give you accurate timelines.</p>
-            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>→</span>No India travel required in most NRI cases</span>
+            <p class="text-sm text-muted leading-relaxed mb-1.5">This affects documentation requirements and the account type for demat credit. Nothing to prepare in advance â€” just knowing this on the call helps us give you accurate timelines.</p>
+            <span class="font-mono text-[10px] tracking-[0.06em] uppercase text-green flex items-center gap-1.5"><span>â†’</span>No India travel required in most NRI cases</span>
           </div>
         </div>
         <!-- Spacer to balance the column visually on desktop -->
@@ -392,7 +405,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   </div>
 </div>
 
-<!-- ═══ CASE STUDIES ═══ -->
+<!-- â•â•â• CASE STUDIES â•â•â• -->
 <div class="border-t border-border-c bg-cream">
   <div class="max-w-site mx-auto px-5 md:px-8 py-14 md:py-[72px]">
     <div class="font-mono text-[10px] font-bold tracking-[0.2em] uppercase text-green mb-3.5 flex items-center gap-2.5">
@@ -400,7 +413,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
       Recoveries We've Completed
     </div>
 
-    <!-- ✅ ONE-LINE HEADLINE -->
+    <!-- âœ… ONE-LINE HEADLINE -->
     <h2 class="nowrap-headline font-display text-navy leading-none tracking-[-0.01em] mb-3"
         style="font-size: clamp(28px, 5.5vw, 72px);">
       Real Cases. <span class="italic text-green">Real Outcomes.</span>
@@ -419,10 +432,10 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
           <div class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green-bright">11 Months</div>
         </div>
         <div class="p-[22px] flex-1">
-          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">₹9.2 Lakh</div>
-          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">IT Manager · Physical Certificates from the 1990s</div>
+          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">â‚¹9.2 Lakh</div>
+          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">IT Manager Â· Physical Certificates from the 1990s</div>
           <p class="text-sm text-ink leading-[1.7] mb-5">
-            Suresh V. had paper certificates from the 1990s. The shares had already moved to IEPF by the time he contacted us. Every CA he consulted directed him elsewhere. On the free call, we identified the holdings, quoted ₹18,000 across three instalments, and filed the complete IEPF-5 process. Eleven months later, the shares were credited to his demat.
+            Suresh V. had paper certificates from the 1990s. The shares had already moved to IEPF by the time he contacted us. Every CA he consulted directed him elsewhere. On the free call, we identified the holdings, quoted â‚¹18,000 across three instalments, and filed the complete IEPF-5 process. Eleven months later, the shares were credited to his demat.
           </p>
           <div class="flex flex-wrap gap-1.5">
             <span class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green bg-green-pale border border-green/20 px-2.5 py-1">IEPF Claim</span>
@@ -437,13 +450,13 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
         <div class="bg-navy px-[22px] py-4 flex justify-between items-start">
           <div>
             <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-white/60">NRI Recovery</div>
-            <div class="text-white text-[13px] font-semibold mt-1">Austin, Texas — No India Trip</div>
+            <div class="text-white text-[13px] font-semibold mt-1">Austin, Texas â€” No India Trip</div>
           </div>
           <div class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green-bright">13 Months</div>
         </div>
         <div class="p-[22px] flex-1">
-          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">₹14 Lakh</div>
-          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">Software Engineer · USA · Inherited Shares</div>
+          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">â‚¹14 Lakh</div>
+          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">Software Engineer Â· USA Â· Inherited Shares</div>
           <p class="text-sm text-ink leading-[1.7] mb-5">
             Ananya R. is based in the US and inherited shares she couldn't track or access from abroad. The entire process was handled through WhatsApp, video calls, and a limited Power of Attorney. FEMA compliance was confirmed before a single document moved. Shares were credited to her NRO demat account 13 months later. She did not travel to India.
           </p>
@@ -460,13 +473,13 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
         <div class="bg-navy px-[22px] py-4 flex justify-between items-start">
           <div>
             <div class="font-mono text-[9px] font-bold tracking-[0.18em] uppercase text-white/60">Legal Heir Case</div>
-            <div class="text-white text-[13px] font-semibold mt-1">Mumbai · Four Siblings · Three Cities</div>
+            <div class="text-white text-[13px] font-semibold mt-1">Mumbai Â· Four Siblings Â· Three Cities</div>
           </div>
           <div class="font-mono text-[9px] font-bold tracking-[0.1em] uppercase text-green-bright">Completed</div>
         </div>
         <div class="p-[22px] flex-1">
-          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">₹22 Lakh</div>
-          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">Operations Head · Shares Held Since Father's Passing</div>
+          <div class="font-display text-[44px] text-gold leading-none tracking-[-0.01em] mb-1.5">â‚¹22 Lakh</div>
+          <div class="font-mono text-[10px] font-bold tracking-[0.1em] uppercase text-muted mb-4">Operations Head Â· Shares Held Since Father's Passing</div>
           <p class="text-sm text-ink leading-[1.7] mb-5">
             Meera K. and three siblings were trying to recover shares after their father passed away. Different cities, no single point of coordination, and three years of inaction. We issued one consolidated checklist for all four, managed the full RTA process, and sent WhatsApp updates at every stage. Completed in full. Three years of waiting, done.
           </p>
@@ -481,12 +494,12 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
     </div>
 
     <div class="mt-9 text-center">
-      <a href="https://www.clearclaim.in/case-study" class="font-mono text-[11px] font-bold tracking-[0.1em] uppercase text-green border-b-2 border-green pb-0.5 transition-opacity hover:opacity-70">Browse all case studies →</a>
+      <a href="https://www.clearclaim.in/case-study" class="font-mono text-[11px] font-bold tracking-[0.1em] uppercase text-green border-b-2 border-green pb-0.5 transition-opacity hover:opacity-70">Browse all case studies â†’</a>
     </div>
   </div>
 </div>
 
-<!-- ═══ NRI STRIP ═══ -->
+<!-- â•â•â• NRI STRIP â•â•â• -->
 <div class="bg-navy text-white py-14 md:py-[72px] px-5 md:px-8 relative overflow-hidden nri-grid on-dark">
   <div class="max-w-site mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center relative">
     <div>
@@ -495,14 +508,14 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
         For Clients Based Abroad
       </div>
 
-      <!-- ✅ ONE-LINE HEADLINE -->
+      <!-- âœ… ONE-LINE HEADLINE -->
       <h2 class="nowrap-headline font-display text-white leading-none tracking-[-0.01em] mb-5"
           style="font-size: clamp(28px, 5vw, 68px);">
         No India Trip <br class="hidden sm:block"><span class="italic text-green-bright">Required.</span>
       </h2>
 
       <p class="text-base text-white/70 leading-[1.7] mb-7 max-w-[480px]">
-        If you're joining from the US, UK, UAE, Australia, Singapore, or anywhere else — the process works the same way. WhatsApp, courier, and a limited Power of Attorney cover everything that would otherwise need a physical visit.
+        If you're joining from the US, UK, UAE, Australia, Singapore, or anywhere else â€” the process works the same way. WhatsApp, courier, and a limited Power of Attorney cover everything that would otherwise need a physical visit.
         <strong class="text-white font-semibold">FEMA compliance and NRO/NRE account coordination are built into how we work, not an afterthought.</strong>
         Most NRI recoveries take 10 to 14 months. The call is the same 30 minutes regardless of where you're dialling from.
       </p>
@@ -526,7 +539,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
         </div>
         <div>
           <div class="text-[15px] font-semibold text-white mb-1">No physical visits needed</div>
-          <p class="text-[13px] text-white/55 leading-relaxed">Every step — filings, RTA coordination, company correspondence — is handled from our Pune office on your behalf.</p>
+          <p class="text-[13px] text-white/55 leading-relaxed">Every step â€” filings, RTA coordination, company correspondence â€” is handled from our Pune office on your behalf.</p>
         </div>
       </div>
       <div class="grid grid-cols-[28px_1fr] gap-4 py-5 border-b border-white/10 items-start">
@@ -544,7 +557,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
         </div>
         <div>
           <div class="text-[15px] font-semibold text-white mb-1">Limited PoA covers everything</div>
-          <p class="text-[13px] text-white/55 leading-relaxed">A limited Power of Attorney — couriered, signed, and returned — is sufficient for the full recovery process in most cases.</p>
+          <p class="text-[13px] text-white/55 leading-relaxed">A limited Power of Attorney â€” couriered, signed, and returned â€” is sufficient for the full recovery process in most cases.</p>
         </div>
       </div>
       <div class="grid grid-cols-[28px_1fr] gap-4 py-5 items-start">
@@ -553,14 +566,14 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
         </div>
         <div>
           <div class="text-[15px] font-semibold text-white mb-1">WhatsApp updates throughout</div>
-          <p class="text-[13px] text-white/55 leading-relaxed">Regular status messages in plain language. No jargon, no chasing — you're informed at every stage that matters.</p>
+          <p class="text-[13px] text-white/55 leading-relaxed">Regular status messages in plain language. No jargon, no chasing â€” you're informed at every stage that matters.</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ TRUST TILES ═══ -->
+<!-- â•â•â• TRUST TILES â•â•â• -->
 <div class="bg-cream border-t border-b border-border-c">
   <div class="max-w-site mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
     <div class="p-9 px-7 border-r-0 sm:border-r border-b sm:border-b-0 lg:border-b-0 border-border-c">
@@ -598,14 +611,14 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   </div>
 </div>
 
-<!-- ═══ FOOTER ═══ -->
+<!-- â•â•â• FOOTER â•â•â• -->
 <footer class="bg-navy text-white pt-14 px-5 md:px-8 pb-8">
 
-  <!-- ✅ Footer logo CENTERED -->
+  <!-- âœ… Footer logo CENTERED -->
   <div class="max-w-site mx-auto flex flex-col items-center gap-5 pb-8 border-b border-white/10">
     <a href="https://www.clearclaim.in" class="flex items-center" aria-label="ClearClaim Home">
       <!--
-        ═══ FOOTER LOGO OPTIONS — pick ONE by uncommenting ═══
+        â•â•â• FOOTER LOGO OPTIONS â€” pick ONE by uncommenting â•â•â•
 
         OPTION 1: Logo image, inverted to white for dark footer (RECOMMENDED for dark logos)
                   `brightness-0 invert` turns ANY logo pure white.
@@ -617,7 +630,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
 
       
     </a>
-    <a href="https://www.clearclaim.in/contact" class="font-mono text-[10px] font-bold tracking-[0.12em] uppercase text-white/50 border border-white/15 px-4 py-2.5 transition-colors hover:text-white hover:border-white/40">Need to reschedule? →</a>
+    <a href="https://www.clearclaim.in/contact" class="font-mono text-[10px] font-bold tracking-[0.12em] uppercase text-white/50 border border-white/15 px-4 py-2.5 transition-colors hover:text-white hover:border-white/40">Need to reschedule? â†’</a>
   </div>
 
   <div class="max-w-site mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 py-10 border-b border-white/10">
@@ -645,7 +658,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
         <li><a href="https://www.clearclaim.in/case-study" class="text-sm text-white/60 hover:text-white transition-colors">Case Studies</a></li>
         <li><a href="https://g.page/r/clearclaim" target="_blank" rel="noopener" class="text-sm text-white/60 hover:text-white transition-colors">Google Reviews</a></li>
         <li><a href="https://www.clearclaim.in/#faq" class="text-sm text-white/60 hover:text-white transition-colors">Recovery FAQ</a></li>
-        <li><a href="https://wa.me/91XXXXXXXXXX" target="_blank" rel="noopener" class="text-sm text-white/60 hover:text-white transition-colors">WhatsApp Us</a></li>
+        <li><a href="https://wa.me/9156701900" target="_blank" rel="noopener" class="text-sm text-white/60 hover:text-white transition-colors">WhatsApp Us</a></li>
       </ul>
     </div>
     <div>
@@ -659,12 +672,12 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   </div>
 
   <div class="max-w-site mx-auto pt-6 flex flex-col md:flex-row justify-between items-center gap-3">
-    <span class="font-mono text-[10px] tracking-[0.06em] text-white/30 uppercase text-center md:text-left">�2026 ClearClaim Ventures Private Limited »» Pune, Maharashtra »» All Rights Reserved</span>
+    <span class="font-mono text-[10px] tracking-[0.06em] text-white/30 uppercase text-center md:text-left">ï¿½2026 ClearClaim Ventures Private Limited Â»Â» Pune, Maharashtra Â»Â» All Rights Reserved</span>
     <span class="font-mono text-[10px] tracking-[0.06em] text-white/30 uppercase">hello@clearclaim.in</span>
   </div>
 </footer>
 
-<!-- ═══ SOCIAL PROOF POPUP ═══ -->
+<!-- â•â•â• SOCIAL PROOF POPUP â•â•â• -->
 <div class="proof-popup fixed bottom-5 left-5 z-[9999] flex items-center gap-3 bg-white border border-border-c rounded-[60px] py-2.5 pl-2.5 pr-5 max-w-[340px] min-w-[260px] shadow-[0_8px_32px_rgba(10,31,61,0.14),0_2px_6px_rgba(10,31,61,0.06)] pointer-events-none"
      id="proof-popup" role="status" aria-live="polite">
   <div class="w-11 h-11 rounded-full bg-green-pale border-2 border-green flex items-center justify-center flex-shrink-0 font-display text-lg text-green" id="proof-avatar" aria-hidden="true">S</div>
@@ -686,7 +699,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   </div>
 </div>
 
-<!-- ═══ SCRIPTS ═══ -->
+<!-- â•â•â• SCRIPTS â•â•â• -->
 <script>
 // TidyCal URL param parsing (kept from original)
 (function () {
@@ -730,7 +743,7 @@ src="https://www.facebook.com/tr?id=1597177845366294&ev=PageView&noscript=1"
   var CITIES= ['Bengaluru, KA','Mumbai, MH','Chennai, TN','Pune, MH','Hyderabad, TS','New Delhi, DL','Kochi, KL','Ahmedabad, GJ','Coimbatore, TN','Kolkata, WB','Austin, TX','San Jose, CA','Dubai, UAE','London, UK','Singapore, SG','Melbourne, AU','Toronto, ON','Sharjah, UAE','Manchester, UK','Mysuru, KA','Lucknow, UP','Nagpur, MH'];
   var ACTIONS = [
     'Just booked a free valuation call',
-    'Certificate identified — process started',
+    'Certificate identified â€” process started',
     'IEPF claim submitted successfully',
     'Legal heir documentation completed',
     'Physical shares converted to demat',

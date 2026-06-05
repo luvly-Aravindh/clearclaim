@@ -1,6 +1,6 @@
 const TopBar = ({ onOpenModal }) => {
   return (
-    <div className="bg-navy text-white px-6 py-3.5 flex items-center justify-between gap-6 sticky top-0 z-50 border-b border-white/5 backdrop-blur-sm">
+    <div className="bg-navy text-white px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 sm:gap-6 sticky top-0 z-50 border-b border-white/5 backdrop-blur-sm">
       
       <a
         href="#top"
@@ -9,7 +9,7 @@ const TopBar = ({ onOpenModal }) => {
         <img
           src="https://www.clearclaim.in/_next/static/media/logo.0..s._s9yl8ut.png"
           alt="ClearClaim logo"
-          className="w-36"
+          className="w-28 sm:w-36"
         />
       </a>
 
@@ -28,7 +28,7 @@ const TopBar = ({ onOpenModal }) => {
       <button
         type="button"
         onClick={onOpenModal}
-        className="text-white px-5 py-2.5 rounded-full font-bold text-sm tracking-wide whitespace-nowrap transition-all hover:-translate-y-px flex-shrink-0"
+        className="text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-[13px] sm:text-sm tracking-wide whitespace-nowrap transition-all hover:-translate-y-px flex-shrink-0"
         style={{
           background:
             "linear-gradient(180deg,#3D6FF0 0%,#2450C4 100%)",

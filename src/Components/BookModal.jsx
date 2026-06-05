@@ -153,7 +153,7 @@ const BookModal = ({ isOpen, onClose }) => {
 
     setIsSubmitting(true);
 
-    // build FormData to match original https://getnos.io/clearclaim-lp/main.php expected fields
+    // build FormData to match https://getnos.io/clearclaim-lp/main.php fields
     const payload = new FormData();
     payload.append("website", formData.website); // honeypot
     payload.append("name", formData.name.trim());
@@ -162,41 +162,56 @@ const BookModal = ({ isOpen, onClose }) => {
     payload.append("case", formData.case);
     payload.append("company", formData.company.trim());
 
-    try {
-      const response = await fetch("https://getnos.io/clearclaim-lp/main.php", {
-        method: "POST",
-        body: payload,
-      });
+    // TidyCal only supports prefilling name + email (phone can't be prefilled);
+    // the phone is captured server-side by main.php.
+    const tidyCalUrl =
+      "https://tidycal.com/meetclearclaim/strategy-call?" +
+      new URLSearchParams({
+        name: formData.name.trim(),
+        email: formData.email.trim().toLowerCase(),
+      }).toString();
 
-      const result = await response.json();
+    // ---------------------------------------------------------------------
+    // ULTRA-FAST REDIRECT
+    // The slow part is the server's email send (main.php runs mail() before
+    // it answers on success). We do NOT wait for that. `keepalive: true` lets
+    // the POST finish in the background even after we navigate away, so the
+    // lead is still saved + emailed. We only pause for a brief window to catch
+    // a "duplicate email" reply (main.php returns that instantly, before any
+    // mail()); otherwise we redirect immediately.
+    // ---------------------------------------------------------------------
+    const capture = fetch("https://getnos.io/clearclaim-lp/main.php", {
+      method: "POST",
+      body: payload,
+      keepalive: true,
+    })
+      .then((r) => r.json())
+      .catch(() => null);
 
-      /* EMAIL EXISTS */
-      if (result.status === "exists") {
-        setErrors((prev) => ({
-          ...prev,
-          email:
-            "You already used this email. Please use another email.",
-        }));
-        setIsSubmitting(false);
-        return;
-      }
+    const result = await Promise.race([
+      capture,
+      new Promise((resolve) => setTimeout(() => resolve("timeout"), 1000)),
+    ]);
 
-      /* SUCCESS */
-      if (result.status === "success") {
-        window.location.href =
-          "https://tidycal.com/meetclearclaim/strategy-call";
-        return;
-      }
-
-      /* ERROR */
-      setStatusMessage(
-        result.message || "Something went wrong"
-      );
+    /* EMAIL EXISTS (arrives fast, before redirect) */
+    if (result && result.status === "exists") {
+      setErrors((prev) => ({
+        ...prev,
+        email: "You already used this email. Please use another email.",
+      }));
       setIsSubmitting(false);
-    } catch (err) {
-      setStatusMessage("Server error. Please try again.");
-      setIsSubmitting(false);
+      return;
     }
+
+    /* EXPLICIT VALIDATION ERROR (also fast) */
+    if (result && result.status === "error") {
+      setStatusMessage(result.message || "Something went wrong");
+      setIsSubmitting(false);
+      return;
+    }
+
+    /* SUCCESS or slow server -> go now (capture continues via keepalive) */
+    window.location.href = tidyCalUrl;
   };
 
   /* =========================================
@@ -222,7 +237,7 @@ const BookModal = ({ isOpen, onClose }) => {
     >
 
       {/* Modal Card */}
-      <div className="relative bg-white w-full max-w-[540px] rounded-[24px] p-5 md:p-5 shadow-2xl max-h-[95vh] overflow-y-hidden">
+      <div className="relative bg-white w-full max-w-[540px] rounded-[24px] p-5 md:p-5 shadow-2xl max-h-[95vh] sm:overflow-y-hidden overflow-y-auto overflow-x-hidden">
 
         {/* Close Button */}
         <button

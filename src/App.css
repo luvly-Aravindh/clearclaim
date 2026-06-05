@@ -186,3 +186,19 @@ html {
 
   /* Hide honeypot */
   .hp-field { position: absolute !important; left: -9999px !important; opacity: 0 !important; pointer-events: none !important; }
+
+  /* ============================================
+     MOBILE SAFETY NET
+     Stops sideways scroll, makes media fluid, and lets flex/grid children
+     shrink instead of forcing the page wider than the screen.
+     (Explicit Tailwind h-*/min-w-* classes still win over these.)
+     ============================================ */
+  html, body { max-width: 100%; overflow-x: hidden; }
+  img, video { max-width: 100%; height: auto; }
+  *, *::before, *::after { min-width: 0; }
+
+  /* Tighter section padding on small screens */
+  @media (max-width: 640px) {
+    h2 { line-height: 1.2; }
+    section { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  }

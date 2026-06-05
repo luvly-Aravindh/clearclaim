@@ -23,7 +23,7 @@ const HeroSection = ({ onOpenModal }) => {
   return (
     <section
       id="top"
-      className="relative overflow-hidden py-20 pb-16"
+      className="relative overflow-hidden sm:py-20 py-12 pb-16"
       style={{
         background: `
           radial-gradient(ellipse at top right, rgba(0,190,93,0.10), transparent 55%),
@@ -32,12 +32,12 @@ const HeroSection = ({ onOpenModal }) => {
         `,
       }}
     >
-      <div className="max-w-[1180px] mx-auto px-6">
+      <div className="max-w-full mx-auto sm:px-6 px-2">
         <div className="text-center">
 
           {/* Eyebrow */}
           <div
-            className="inline-flex items-center gap-2.5 mb-6 px-[18px] py-[9px] rounded-full font-mono text-[11px] tracking-[0.14em] uppercase font-semibold"
+            className="inline-flex items-center gap-2.5 mb-6 sm:px-[18px] px-4 py-[9px] rounded-full font-mono text-[11px] tracking-[0.14em] uppercase font-semibold"
             style={{
               background: "#FDECEE",
               color: "#C42330",
@@ -45,7 +45,7 @@ const HeroSection = ({ onOpenModal }) => {
             }}
           >
             <span
-              className="w-2 h-2 rounded-full pulse-dot-red flex-shrink-0"
+              className="sm:w-2 sm:h-2 w-4 h-4 rounded-full pulse-dot-red flex-shrink-0"
               style={{ background: "#D92D3A" }}
             ></span>
 
@@ -164,7 +164,7 @@ const HeroSection = ({ onOpenModal }) => {
               Get My Free Valuation
             </button>
 
-            <div className="font-mono text-[11px] tracking-[0.14em] uppercase text-mute">
+            <div className="font-mono sm:text-[11px] text-[13px] tracking-[0.14em] uppercase text-mute">
               <span className="text-green font-bold mr-1">✓</span>
               No documents required &nbsp;
 
