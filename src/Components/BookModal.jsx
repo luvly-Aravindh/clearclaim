@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { last10 } from "./ccLead";
 
 const initialFormState = {
   website: "", // honeypot
@@ -18,7 +19,7 @@ const initialErrors = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const BookModal = ({ isOpen, onClose }) => {
+const BookModal = ({ isOpen, onClose, prefill }) => {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrors);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,15 +71,24 @@ const BookModal = ({ isOpen, onClose }) => {
 
   /* =========================================
      RESET FORM EACH TIME MODAL OPENS
+     Email + WhatsApp are pre-filled from the opt-in lead (sessionStorage),
+     so the visitor never re-types what they already gave at the gate. The
+     opt-in captures a full WhatsApp number with country code; the phone
+     field here is a 10 digit Indian mobile, so we seed it with the last 10
+     digits. Name / case / company stay blank for the visitor to complete.
   ========================================= */
   useEffect(() => {
     if (isOpen) {
-      setFormData(initialFormState);
+      setFormData({
+        ...initialFormState,
+        email: prefill?.email || "",
+        phone: last10(prefill?.whatsapp || ""),
+      });
       setErrors(initialErrors);
       setStatusMessage("");
       setIsSubmitting(false);
     }
-  }, [isOpen]);
+  }, [isOpen, prefill]);
 
   /* =========================================
      INPUT CHANGE
@@ -162,13 +172,25 @@ const BookModal = ({ isOpen, onClose }) => {
     payload.append("case", formData.case);
     payload.append("company", formData.company.trim());
 
-    // TidyCal only supports prefilling name + email (phone can't be prefilled);
-    // the phone is captured server-side by main.php.
+    // TidyCal officially prefills name + email via URL params. We follow the
+    // same pattern and additionally pass the WhatsApp number. We keep the full
+    // country-code string from the opt-in when the visitor has not edited the
+    // phone, otherwise we use what they typed here. The number is also captured
+    // server-side by main.php (the `phone` field), so it is stored regardless
+    // of whether TidyCal's widget consumes the param.
+    const fullWhatsapp = (prefill?.whatsapp || "").trim();
+    const whatsappForTidyCal =
+      fullWhatsapp && last10(fullWhatsapp) === formData.phone
+        ? fullWhatsapp
+        : formData.phone;
+
     const tidyCalUrl =
       "https://tidycal.com/meetclearclaim/strategy-call?" +
       new URLSearchParams({
         name: formData.name.trim(),
         email: formData.email.trim().toLowerCase(),
+        phone: whatsappForTidyCal,
+        whatsapp: whatsappForTidyCal,
       }).toString();
 
     // ---------------------------------------------------------------------
