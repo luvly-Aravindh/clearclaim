@@ -6,6 +6,20 @@ import ccWordmark from "../assets/clearclaim-wordmark.png";
 
 const OPTIN_WEBHOOK_URL = "";
 
+// Lives in /public, so it is served from the site root. Same-origin => forces a download.
+const OPTIN_PDF_URL = "/clearclaim-optin.pdf";
+
+// Trigger a same-origin file download without leaving the page.
+const downloadFile = (url, filename) => {
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.rel = "noopener";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Check = ({ className = "" }) => (
@@ -59,8 +73,13 @@ const ClearClaimOptin = ({ onComplete }) => {
       }
     }
 
-    // Advance the funnel: opt-in -> landing page.
-    onComplete?.(lead);
+    // Download the report, then advance the funnel: opt-in -> landing page.
+    downloadFile(OPTIN_PDF_URL, "clearclaim-optin.pdf");
+
+    // Small delay lets the download start before any route change / redirect.
+    setTimeout(() => {
+      onComplete?.(lead);
+    }, 800);
   };
 
   const fieldInput =
