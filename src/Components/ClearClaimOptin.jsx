@@ -22,8 +22,9 @@ const ClearClaimOptin = ({ onComplete }) => {
     () => emailRegex.test(email.trim()) && email.trim().length >= 6,
     [email]
   );
+  // Exactly 10 digits — fewer or more than 10 is invalid. No +91 / country code.
   const phoneValid = useMemo(
-    () => whatsapp.replace(/\D/g, "").length >= 10,
+    () => whatsapp.replace(/\D/g, "").length === 10,
     [whatsapp]
   );
 
@@ -133,7 +134,7 @@ const ClearClaimOptin = ({ onComplete }) => {
 
                 {/* Email */}
                 <div className={`cc-field relative mb-3.5 ${emailValid ? "is-valid" : ""}`}>
-                  <label htmlFor="cc-email" className="block text-[13px] font-bold text-[#1F3027] mb-1.5">Your email</label>
+                  <label htmlFor="cc-email" className="block text-[13px] font-bold text-[#1F3027] mb-1.5">Your Email</label>
                   <input
                     type="email"
                     id="cc-email"
@@ -150,18 +151,19 @@ const ClearClaimOptin = ({ onComplete }) => {
                   </span>
                 </div>
 
-                {/* WhatsApp */}
+                {/* WhatsApp — plain 10-digit number, no country code */}
                 <div className={`cc-field relative mb-3.5 ${phoneValid ? "is-valid" : ""}`}>
-                  <label htmlFor="cc-phone" className="block text-[13px] font-bold text-[#1F3027] mb-1.5">Your WhatsApp number (with country code)</label>
+                  <label htmlFor="cc-phone" className="block text-[13px] font-bold text-[#1F3027] mb-1.5">Your WhatsApp Number</label>
                   <input
                     type="tel"
                     id="cc-phone"
                     name="whatsapp"
                     value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder="+91 98765 43210"
+                    onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    placeholder="9876543210"
                     autoComplete="tel"
-                    inputMode="tel"
+                    inputMode="numeric"
+                    maxLength={10}
                     required
                     className={fieldInput}
                   />
@@ -267,8 +269,11 @@ const ClearClaimOptin = ({ onComplete }) => {
       {/* ============ FOOTER ============ */}
       <footer className="bg-[#00301A] text-[#95A39B] pt-9 pb-7 text-center text-[13px]">
         <div className="max-w-[1280px] mx-auto px-5 md:px-8">
-          <img src={ccWordmark} alt="ClearClaim" className="w-[130px] mx-auto mb-[18px] block opacity-95" />
-          <div className="flex justify-center gap-6 mb-2 flex-wrap">
+  <img
+    src="https://www.clearclaim.in/_next/static/media/logo.0..s._s9yl8ut.png"
+    alt="ClearClaim"
+    className="h-10 md:h-12 w-auto mx-auto mb-2"
+  />          <div className="flex justify-center gap-6 mb-2 flex-wrap">
             <span><strong className="text-white font-bold">Recovery Specialists for Indian Families</strong></span>
             <span>support@clearclaim.in</span>
           </div>
