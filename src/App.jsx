@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 
-import ClearClaimOptin from "./Components/ClearClaimOptin";
+import ClearClaimLanding from "./Components/ClearClaimLanding";
 import { loadLead } from "./Components/ccLead";
 import TopBar from "./Components/TopBar";
 import HeroSection from "./Components/HeroSection";
@@ -24,9 +24,9 @@ import ProofTicker from "./Components/ProofTicker";
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // ClearClaimOptin is the entry point on every page load. The landing page is
-  // reached only by submitting the opt-in (the funnel functionality), so a
-  // refresh always returns to the opt-in gate.
+  // ClearClaimLanding (the opt-in gate) is the entry point on every page
+  // load. The landing page is reached only by submitting the opt-in (the
+  // funnel functionality), so a refresh always returns to the opt-in gate.
   const [view, setView] = useState("optin");
   const [lead, setLead] = useState(() => loadLead());
 
@@ -39,9 +39,9 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  // Opt-in Page -> Landing Page -> Book a Call
+  // Opt-in Page -> Landing Page -> Book a Call (TidyCal)
   if (view === "optin") {
-    return <ClearClaimOptin onComplete={handleOptinComplete} />;
+    return <ClearClaimLanding onComplete={handleOptinComplete} />;
   }
 
   return (

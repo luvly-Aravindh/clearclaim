@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { last10 } from "./ccLead";
 
+/* =====================================================================
+   BOOKING URL. Single source of truth.
+   The funnel ends here: optin page -> landing page -> TidyCal.
+   TidyCal prefills the booking form from URL query params (name, email,
+   etc.), so the visitor never re-types what they already gave.
+   ===================================================================== */
+const TIDYCAL_BOOKING_URL = "https://tidycal.com/meetclearclaim/strategy-call";
+
 const initialFormState = {
   website: "", // honeypot
   name: "",
@@ -172,12 +180,12 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     payload.append("case", formData.case);
     payload.append("company", formData.company.trim());
 
-    // TidyCal officially prefills name + email via URL params. We follow the
-    // same pattern and additionally pass the WhatsApp number. We keep the full
-    // country-code string from the opt-in when the visitor has not edited the
+    // TidyCal prefills its booking form from URL query params. We pass the
+    // visitor's name + email and also forward the phone/WhatsApp number. We
+    // keep the full string from the opt-in when the visitor has not edited the
     // phone, otherwise we use what they typed here. The number is also captured
     // server-side by main.php (the `phone` field), so it is stored regardless
-    // of whether TidyCal's widget consumes the param.
+    // of what TidyCal consumes.
     const fullWhatsapp = (prefill?.whatsapp || "").trim();
     const whatsappForTidyCal =
       fullWhatsapp && last10(fullWhatsapp) === formData.phone
@@ -185,10 +193,15 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
         : formData.phone;
 
     const tidyCalUrl =
-      "https://tidycal.com/meetclearclaim/strategy-call?" +
+      TIDYCAL_BOOKING_URL +
+      (TIDYCAL_BOOKING_URL.includes("?") ? "&" : "?") +
       new URLSearchParams({
         name: formData.name.trim(),
         email: formData.email.trim().toLowerCase(),
+        // TidyCal prefills its booking phone field from `no_phone`, not
+        // `phone`. We send the visitor's number under every likely key so it
+        // lands regardless of how the booking page is configured.
+        no_phone: whatsappForTidyCal,
         phone: whatsappForTidyCal,
         whatsapp: whatsappForTidyCal,
       }).toString();
@@ -232,7 +245,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       return;
     }
 
-    /* SUCCESS or slow server -> go now (capture continues via keepalive) */
+    /* SUCCESS or slow server -> go to TidyCal now (capture continues via keepalive) */
     window.location.href = tidyCalUrl;
   };
 
