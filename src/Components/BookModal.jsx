@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { last10 } from "./ccLead";
+import "./BookModal.css";
+import { ensureIntlTelInput, ITI_OPTIONS, isValidPhone } from "./phoneField";
 
 /* =====================================================================
    BOOKING URL. Single source of truth.
@@ -12,7 +13,6 @@ const TIDYCAL_BOOKING_URL = "https://tidycal.com/meetclearclaim/strategy-call";
 const initialFormState = {
   website: "", // honeypot
   name: "",
-  phone: "",
   email: "",
   case: "",
   company: "",
@@ -34,6 +34,15 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   const [statusMessage, setStatusMessage] = useState("");
 
   const nameInputRef = useRef(null);
+  const phoneInputRef = useRef(null);
+  const itiRef = useRef(null);
+  const [phoneValid, setPhoneValid] = useState(false);
+
+  /* Re-evaluate the phone field using the SAME rules as the opt-in gate
+     (India = exactly 10 starting 6-9; others 7-14; dummy numbers rejected). */
+  const recheckPhone = () => {
+    setPhoneValid(isValidPhone(itiRef.current, phoneInputRef.current?.value));
+  };
 
   /* =========================================
      LOCK BODY SCROLL + FOCUS FIRST FIELD
@@ -78,19 +87,65 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   }, [isOpen, onClose]);
 
   /* =========================================
+     INTL-TEL-INPUT (same field/UI as the opt-in gate)
+     The modal mounts fresh on each open, so init when it opens and
+     destroy on close. Seed from the opt-in lead's full WhatsApp number
+     (E.164) so the flag + national digits populate automatically.
+  ========================================= */
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const initIti = () => {
+      const el = phoneInputRef.current;
+      if (!el || !window.intlTelInput || itiRef.current) return;
+      try {
+        itiRef.current = window.intlTelInput(el, ITI_OPTIONS);
+        // Bind directly to the element so validity updates on every change,
+        // independent of React's synthetic events on the plugin-managed node.
+        el.addEventListener("input", recheckPhone);
+        el.addEventListener("blur", recheckPhone);
+        el.addEventListener("countrychange", recheckPhone);
+        if (prefill?.whatsapp) {
+          try { itiRef.current.setNumber(prefill.whatsapp); } catch { /* ignore */ }
+        }
+      } catch {
+        itiRef.current = null;
+      }
+      recheckPhone();
+      // setNumber / utils can populate a tick later — re-check then too.
+      window.setTimeout(recheckPhone, 300);
+    };
+
+    const detachLoader = ensureIntlTelInput(initIti);
+
+    return () => {
+      if (typeof detachLoader === "function") detachLoader();
+      const el = phoneInputRef.current;
+      if (el) {
+        el.removeEventListener("input", recheckPhone);
+        el.removeEventListener("blur", recheckPhone);
+        el.removeEventListener("countrychange", recheckPhone);
+      }
+      if (itiRef.current && typeof itiRef.current.destroy === "function") {
+        try { itiRef.current.destroy(); } catch { /* ignore */ }
+      }
+      itiRef.current = null;
+      setPhoneValid(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, prefill]);
+
+  /* =========================================
      RESET FORM EACH TIME MODAL OPENS
-     Email + WhatsApp are pre-filled from the opt-in lead (sessionStorage),
-     so the visitor never re-types what they already gave at the gate. The
-     opt-in captures a full WhatsApp number with country code; the phone
-     field here is a 10 digit Indian mobile, so we seed it with the last 10
-     digits. Name / case / company stay blank for the visitor to complete.
+     Email is pre-filled from the opt-in lead so the visitor never re-types
+     it. The WhatsApp number is seeded into the intl-tel-input field above.
+     Name / case / company stay blank for the visitor to complete.
   ========================================= */
   useEffect(() => {
     if (isOpen) {
       setFormData({
         ...initialFormState,
         email: prefill?.email || "",
-        phone: last10(prefill?.whatsapp || ""),
       });
       setErrors(initialErrors);
       setStatusMessage("");
@@ -103,14 +158,6 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   ========================================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // phone -> digits only, max 10
-    if (name === "phone") {
-      const cleaned = value.replace(/\D/g, "").slice(0, 10);
-      setFormData((prev) => ({ ...prev, phone: cleaned }));
-      return;
-    }
-
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -119,7 +166,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   ========================================= */
   const isFormValid =
     formData.name.trim().length >= 2 &&
-    formData.phone.length === 10 &&
+    phoneValid &&
     emailRegex.test(formData.email.trim()) &&
     formData.case !== "";
 
@@ -135,8 +182,8 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       valid = false;
     }
 
-    if (formData.phone.length !== 10) {
-      newErrors.phone = "Phone number must be exactly 10 digits";
+    if (!phoneValid) {
+      newErrors.phone = "Please enter a valid phone number";
       valid = false;
     }
 
@@ -171,39 +218,53 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
 
     setIsSubmitting(true);
 
+    // Derive both forms of the number from the phone field:
+    //  • phoneNational  -> national significant digits (10 for India). This is
+    //    what main.php validates/stores, so we MUST send this (not the +91...
+    //    international form, which the server rejects as "not 10 digits").
+    //  • phoneIntl      -> full international number (E.164, e.g. +919876543210),
+    //    forwarded to TidyCal so the booking keeps the country code.
+    const iti = itiRef.current;
+    const e164 =
+      iti && typeof iti.getNumber === "function" && iti.getNumber()
+        ? iti.getNumber()
+        : "";
+    const dial =
+      iti && typeof iti.getSelectedCountryData === "function"
+        ? iti.getSelectedCountryData().dialCode || ""
+        : "";
+    const rawNational = (phoneInputRef.current?.value || "").replace(/\D/g, "");
+
+    let phoneNational = rawNational;
+    if (e164) {
+      const allDigits = e164.replace(/\D/g, "");
+      phoneNational =
+        dial && allDigits.startsWith(dial) ? allDigits.slice(dial.length) : allDigits;
+    }
+    const phoneIntl = e164 || rawNational;
+
     // build FormData to match https://getnos.io/clearclaim-lp/main.php fields
     const payload = new FormData();
     payload.append("website", formData.website); // honeypot
     payload.append("name", formData.name.trim());
-    payload.append("phone", formData.phone);
+    payload.append("phone", phoneNational);
+    payload.append("phone_intl", phoneIntl); // full international (with country code)
     payload.append("email", formData.email.trim());
     payload.append("case", formData.case);
     payload.append("company", formData.company.trim());
 
     // TidyCal prefills its booking form from URL query params. We pass the
-    // visitor's name + email and also forward the phone/WhatsApp number. We
-    // keep the full string from the opt-in when the visitor has not edited the
-    // phone, otherwise we use what they typed here. The number is also captured
-    // server-side by main.php (the `phone` field), so it is stored regardless
-    // of what TidyCal consumes.
-    const fullWhatsapp = (prefill?.whatsapp || "").trim();
-    const whatsappForTidyCal =
-      fullWhatsapp && last10(fullWhatsapp) === formData.phone
-        ? fullWhatsapp
-        : formData.phone;
-
+    // visitor's name + email and forward the full international number under
+    // every likely phone key so it lands regardless of the booking config.
     const tidyCalUrl =
       TIDYCAL_BOOKING_URL +
       (TIDYCAL_BOOKING_URL.includes("?") ? "&" : "?") +
       new URLSearchParams({
         name: formData.name.trim(),
         email: formData.email.trim().toLowerCase(),
-        // TidyCal prefills its booking phone field from `no_phone`, not
-        // `phone`. We send the visitor's number under every likely key so it
-        // lands regardless of how the booking page is configured.
-        no_phone: whatsappForTidyCal,
-        phone: whatsappForTidyCal,
-        whatsapp: whatsappForTidyCal,
+        no_phone: phoneIntl,
+        phone: phoneIntl,
+        whatsapp: phoneIntl,
       }).toString();
 
     // ---------------------------------------------------------------------
@@ -349,21 +410,19 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
               Phone Number
             </label>
 
-            <input
-              type="tel"
-              id="vPhone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              maxLength={10}
-              inputMode="numeric"
-              placeholder="10 digit mobile number"
-              className={`${inputBase} ${
-                errors.phone
-                  ? "border-red-500 field-error"
-                  : "border-gray-300"
-              }`}
-            />
+            <div className={`cc-phone-field ${errors.phone ? "has-error" : ""}`}>
+              <input
+                type="tel"
+                id="vPhone"
+                name="phone"
+                ref={phoneInputRef}
+                onInput={recheckPhone}
+                onBlur={recheckPhone}
+                autoComplete="tel"
+                inputMode="tel"
+                placeholder="WhatsApp number"
+              />
+            </div>
 
             {errors.phone && (
               <p className="mt-2 text-red-500 text-sm font-semibold">

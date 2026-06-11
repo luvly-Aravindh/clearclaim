@@ -1,0 +1,37 @@
+/* =====================================================================
+   BookModal.css
+   Styles the intl-tel-input phone field inside the booking modal so it
+   matches the modal's other inputs (rounded-xl, px-5 py-4, green focus).
+   Scoped under `.cc-phone-field` so it never leaks to the opt-in gate.
+   ===================================================================== */
+
+.cc-phone-field .iti { width: 100%; display: block; }
+
+.cc-phone-field .iti input.iti__tel-input,
+.cc-phone-field .iti input[type="tel"] {
+  width: 100%;
+  border: 1px solid #d1d5db;            /* gray-300, like the other fields */
+  border-radius: 0.75rem;               /* rounded-xl */
+  padding: 1rem 1.25rem;                /* py-4 px-5 */
+  font-size: 1rem;
+  color: #161d34;
+  outline: none;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+
+.cc-phone-field .iti input.iti__tel-input:focus,
+.cc-phone-field .iti input[type="tel"]:focus {
+  border-color: #00BE5D;
+  box-shadow: 0 0 0 4px rgba(0, 190, 93, 0.15);
+}
+
+/* Error state mirrors the global .field-error look used by the other inputs */
+.cc-phone-field.has-error .iti input[type="tel"] {
+  border-color: #EC7D8C;
+  background-color: #FEF5F6;
+}
+
+.cc-phone-field .iti__selected-country { border-radius: 0.75rem 0 0 0.75rem; background: rgba(0,190,93,0.06); }
+.cc-phone-field .iti__selected-country:hover { background: rgba(0,190,93,0.12); }
+.iti__dropdown-content { font-size: 0.95rem; border-radius: 0.75rem; }

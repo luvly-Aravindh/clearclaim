@@ -1,0 +1,182 @@
+/* =========================================================
+   CLEARCLAIM 3D BOOK  v2  (drop-in, replaces previous .book block)
+   Stronger extrusion. Cover sits 40px proud of a real spine slab.
+   No JSX changes needed. Matches existing markup.
+   ========================================================= */
+
+:root { --book-depth: 40px; }
+
+.book-stage {
+  perspective: 1800px;
+  perspective-origin: 60% 45%;
+  overflow: visible;
+}
+
+.book {
+  position: relative;
+  width: 340px;
+  height: 470px;
+  transform-style: preserve-3d;
+  transform: rotateX(4deg) rotateY(-32deg);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.book:hover { transform: rotateX(3deg) rotateY(-20deg); }
+
+@media (max-width: 768px) {
+  :root { --book-depth: 30px; }
+  .book { width: 262px; height: 362px; transform: rotateX(4deg) rotateY(-26deg); }
+}
+
+/* ---- COVER : front face, pushed forward by the book depth ---- */
+.book-cover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 28px;
+  border-radius: 3px 10px 10px 3px;
+  background:
+    radial-gradient(130% 130% at 8% -5%, rgba(255,255,255,0.12), transparent 40%),
+    linear-gradient(150deg, #143020 0%, #0F1F14 45%, #06100B 100%);
+  color: #fff;
+  transform: translateZ(var(--book-depth));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    inset 3px 0 7px rgba(255,255,255,0.07),
+    inset -4px 0 12px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.book-cover::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(108deg, transparent 36%, rgba(255,255,255,0.09) 47%, transparent 57%);
+  pointer-events: none;
+}
+
+/* ---- SPINE : left face, full depth slab ---- */
+.book-spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--book-depth);
+  height: 100%;
+  border-radius: 3px 0 0 3px;
+  background: linear-gradient(90deg, #02060410 0%, #081310 30%, #0F1F14 100%),
+              linear-gradient(#081310, #02110A);
+  transform: translateX(calc(var(--book-depth) * -1)) rotateY(-90deg);
+  transform-origin: right center;
+  box-shadow: inset -10px 0 18px rgba(0,0,0,0.65);
+}
+
+/* ---- PAGES : right face, cream paper block ---- */
+.book-pages {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  width: var(--book-depth);
+  height: calc(100% - 10px);
+  transform: translateX(var(--book-depth)) rotateY(90deg);
+  transform-origin: left center;
+  border-radius: 0 2px 2px 0;
+  background: repeating-linear-gradient(
+    90deg, #f5f3ea 0px, #f5f3ea 1.5px, #d6d3c4 1.5px, #d6d3c4 3px);
+  box-shadow: inset 6px 0 10px rgba(0,0,0,0.12);
+}
+
+/* ---- FLOOR SHADOW ---- */
+.book-shadow {
+  position: absolute;
+  left: 46%;
+  bottom: -52px;
+  width: 92%;
+  height: 50px;
+  transform: translateX(-50%) rotateX(80deg) translateZ(calc(var(--book-depth) / 2));
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.5), transparent 72%);
+  filter: blur(11px);
+  z-index: -1;
+}
+
+/* =========================================================
+   COVER CONTENT (alignment)
+   ========================================================= */
+.book-top-row { display: flex; align-items: flex-start; justify-content: space-between; }
+.book-logo-mark img { height: 30px; width: auto; display: block; }
+
+.book-stamp {
+  display: flex; flex-direction: column; align-items: center;
+  line-height: 1; padding: 6px 9px;
+  border: 1px solid rgba(197,255,61,0.5); border-radius: 6px;
+}
+.book-stamp-line1 {
+  font-family: "JetBrains Mono", monospace; font-size: 8px;
+  letter-spacing: 0.16em; color: #c5ff3d; text-transform: uppercase;
+}
+.book-stamp-line2 { font-family: "Bebas Neue", sans-serif; font-size: 20px; color: #fff; }
+
+.book-title-wrap { margin-top: 26px; flex: 1; }
+.book-title-main, .book-title-report { white-space: nowrap; }
+.book-brand-strip {
+  font-family: "JetBrains Mono", monospace; font-size: 8.5px;
+  letter-spacing: 0.18em; color: rgba(255,255,255,0.62); text-transform: uppercase;
+}
+.book-brand-strip strong { color: #c5ff3d; }
+.book-title-the {
+  font-family: "Bebas Neue", sans-serif; font-size: 22px;
+  letter-spacing: 0.12em; color: rgba(255,255,255,0.7); line-height: 1;
+}
+.book-title-main {
+  font-family: "Bebas Neue", sans-serif; font-size: 44px;
+  line-height: 0.9; letter-spacing: 0.01em; color: #fff;
+}
+.book-title-accent {
+  font-family: "Instrument Serif", serif; font-style: italic;
+  font-size: 46px; line-height: 0.95; color: #c5ff3d; margin: 2px 0;
+}
+.book-title-report {
+  font-family: "Bebas Neue", sans-serif; font-size: 44px;
+  line-height: 0.9; letter-spacing: 0.02em; color: #fff;
+}
+
+.book-bottom { margin-top: auto; }
+.book-sub {
+  font-family: "Archivo", sans-serif; font-size: 11px;
+  line-height: 1.45; color: rgba(255,255,255,0.74); margin-bottom: 12px;
+}
+.book-companies {
+  font-family: "JetBrains Mono", monospace; font-size: 8px;
+  letter-spacing: 0.08em; line-height: 1.7; color: rgba(197,255,61,0.85);
+  padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+@media (max-width: 768px) {
+  .book-cover { padding: 22px 20px; }
+  .book-title-main, .book-title-report { font-size: 40px; }
+  .book-title-accent { font-size: 34px; }
+}
+
+/* =========================================================
+   FLOATING TAGS
+   ========================================================= */
+.book-float-tag {
+  position: absolute; z-index: 5;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 14px; border-radius: 999px;
+  font-family: "JetBrains Mono", monospace; font-size: 11px;
+  font-weight: 600; letter-spacing: 0.02em;
+  background: #fff; color: #0F1F14;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  animation: bookFloat 5s ease-in-out infinite;
+}
+.book-float-tag svg { width: 15px; height: 15px; color: #008B45; }
+.book-float-tag.top { top: 6%; right: -7%; }
+.book-float-tag.bottom { bottom: 9%; left: -9%; animation-delay: 1.2s; }
+.book-float-tag.yellow { background: #c5ff3d; color: #0F1F14; }
+.book-float-tag.yellow svg { color: #0F1F14; }
+
+@keyframes bookFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+
+@media (max-width: 768px) {
+  .book-float-tag.top { right: -2%; }
+  .book-float-tag.bottom { left: -2%; }
+}
