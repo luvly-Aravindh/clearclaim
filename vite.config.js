@@ -3,6 +3,6 @@ import react from "@vitejs/plugin-react";
 
 // http://oldshares.clearclaim.in/
 export default defineConfig({
-  base: "http://oldshares.clearclaim.in/",
+  base: "https://oldshares.clearclaim.in/",
   plugins: [react()],
 });
