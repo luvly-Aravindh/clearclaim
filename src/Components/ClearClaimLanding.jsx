@@ -342,7 +342,7 @@ const ClearClaimLanding = ({ onComplete }) => {
           <img src={wordmarkImg} alt="ClearClaim" className="w-[130px] mx-auto mb-[18px] block opacity-95" />
           <div className="flex justify-center gap-6 mb-2 flex-wrap">
             <span><strong className="text-white font-bold">Recovery Specialists for Indian Families</strong></span>
-            <span>support@clearclaim.in</span>
+            <span>sales@clearclaim.in</span>
           </div>
           <div>
             Edition 01 · 2026 · Compiled in Bengaluru · Valuations are illustrative and based on publicly available BSE and NSE corporate action data.

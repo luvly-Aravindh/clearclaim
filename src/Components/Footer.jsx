@@ -121,7 +121,7 @@ const Footer = ({ onOpenModal }) => {
         {/* Bottom bar */}
         <div className="pt-5 border-t border-white/10 font-mono text-[12px] tracking-[0.06em] flex justify-between flex-wrap gap-4">
           <div>© 2026 ClearClaim Ventures Private Limited. All rights reserved.</div>
-          <div>clearclaim.in · hello@clearclaim.in · +91 98765 43210</div>
+          <div>clearclaim.in · sales@clearclaim.in · +91 98765 43210</div>
         </div>
       </div>
     </footer>
