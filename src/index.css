@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ticker-wrapper {
+ display:flex;
+ width:max-content;
+}

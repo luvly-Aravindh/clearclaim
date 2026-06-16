@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./ClearClaimLanding.css";
 import markImg from "../assets/clearclaim-mark.png";
 import wordmarkImg from "../assets/clearclaim-wordmark.png";
+import reportPdf from "../clearclaim_optin.pdf";
 import { ensureIntlTelInput, ITI_OPTIONS, isValidPhone } from "./phoneField";
 
 /* =====================================================================
@@ -55,6 +56,15 @@ const BULLETS = [
   "Documents required for recovery, by case type.",
   "The 4-question decision tree. Which certificates to pursue. Which to leave alone.",
 ];
+
+const downloadReportPdf = () => {
+  const link = document.createElement("a");
+  link.href = reportPdf;
+  link.download = "clearclaim-forgotten-crorepati-report.pdf";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
 
 const ClearClaimLanding = ({ onComplete }) => {
   const [email, setEmail] = useState("");
@@ -190,6 +200,7 @@ const ClearClaimLanding = ({ onComplete }) => {
     }
 
     setSubmitted(true);
+    downloadReportPdf();
 
     // Advance the funnel IN-APP: optin -> landing (App opens prefilled BookModal).
     window.setTimeout(() => {
