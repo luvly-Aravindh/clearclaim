@@ -1,5 +1,5 @@
-import Hardik from "../assets/Shrikant.jpg";
-import Shrikant from "../assets/Hardik.jpg";
+import Hardik from "../assets/hardik.jpg";
+import Shrikant from "../assets/shrikant.jpg";
 
 const Makers = () => {
   return (
