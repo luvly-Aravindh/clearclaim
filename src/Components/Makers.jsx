@@ -25,7 +25,7 @@ const Makers = () => {
                   </div>
 
                   <div className="text-[12px] text-slate-500">
-                    Co-Founder &amp; COO
+                    Co-Founder &amp; CEO
                   </div>
                 </div>
 
@@ -44,7 +44,7 @@ const Makers = () => {
                   </div>
 
                   <div className="text-[12px] text-slate-500">
-                    Co-Founder &amp; CEO
+                     Co-Founder &amp; COO
                   </div>
                 </div>
               </div>
