@@ -525,7 +525,8 @@ function Footer() {
     <footer className="bg-[#0A1F3D] text-white pt-14 px-5 md:px-8 pb-8">
       <div className="max-w-[1240px] mx-auto flex flex-col items-center gap-5 pb-8 border-b border-white/10">
         <a href="https://www.clearclaim.in">
-          <img src="https://www.clearclaim.in/_next/static/media/logo.0..s._s9yl8ut.png" alt="ClearClaim" className="h-14 w-auto" />
+          <img src={wordmarkImg} alt="ClearClaim" className="h-14 w-auto" />
+          
         </a>
         <a
           href="https://www.clearclaim.in/contact"
