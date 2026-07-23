@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import wordmarkImg from "../assets/clearclaim-wordmark.png";
 
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const TICKER_ITEMS = [
@@ -204,7 +205,7 @@ function Nav() {
     <nav className="bg-white border-b border-[#DDE4EE] py-4 px-5 md:px-8 flex justify-between items-center sticky top-0 z-[100]">
       <a href="https://www.clearclaim.in">
         <img
-          src="https://www.clearclaim.in/_next/static/media/logo.0..s._s9yl8ut.png"
+          src={wordmarkImg}
           alt="ClearClaim"
           className="h-10 md:h-14 w-auto"
         />
