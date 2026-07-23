@@ -1,3 +1,5 @@
+import wordmarkImg from "../assets/clearclaim-wordmark.png";
+
 const TopBar = ({ onOpenModal }) => {
   return (
     <div className="bg-navy text-white px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3 sm:gap-6 sticky top-0 z-50 border-b border-white/5 backdrop-blur-sm">
@@ -7,7 +9,7 @@ const TopBar = ({ onOpenModal }) => {
         className="flex items-center gap-2.5 no-underline flex-shrink-0"
       >
         <img
-          src="https://www.clearclaim.in/_next/static/media/logo.0..s._s9yl8ut.png"
+          src={wordmarkImg}
           alt="ClearClaim logo"
           className="w-28 sm:w-36"
         />
