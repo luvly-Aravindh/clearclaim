@@ -39,81 +39,62 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   const [phoneValid, setPhoneValid] = useState(false);
 
   /* =========================================
-     HANDLE PHONE INPUT - ONLY 10 DIGITS
+     HANDLE PHONE INPUT - 7 TO 14 DIGITS, ANY COUNTRY
   ========================================= */
   const handlePhoneInput = (e) => {
     const input = e.target;
     // Remove all non-digit characters
     let value = input.value.replace(/\D/g, "");
-    
-    // Limit to 10 digits
-    if (value.length > 10) {
-      value = value.slice(0, 10);
+
+    // Limit to 14 digits (max national significant number length)
+    if (value.length > 14) {
+      value = value.slice(0, 14);
     }
-    
+
     // Update the input value
     input.value = value;
-    
+
     // Trigger validation
     recheckPhone();
   };
 
-  /* Re-evaluate the phone field - now checking for exactly 10 digits */
+  /* Re-evaluate the phone field - country agnostic, 7 to 14 digits */
   const recheckPhone = () => {
     const iti = itiRef.current;
     const input = phoneInputRef.current;
-    
+
     if (!iti || !input) {
       setPhoneValid(false);
       return;
     }
 
-    // Get the raw national number (digits only) - should already be 10 digits max
+    // Get the raw number (digits only)
     const rawNumber = input.value.replace(/\D/g, "");
-    
+
     // Get the country data
     const countryData = iti.getSelectedCountryData ? iti.getSelectedCountryData() : null;
     const dialCode = countryData?.dialCode || "";
-    
+
     // Remove the country code from the raw number if present
     let nationalNumber = rawNumber;
     if (dialCode && rawNumber.startsWith(dialCode)) {
       nationalNumber = rawNumber.slice(dialCode.length);
     }
 
-    // For India (+91), check exactly 10 digits starting with 6,7,8,9
-    if (dialCode === "91") {
-      // Check if exactly 10 digits and starts with 6-9
-      const isValid = /^[6-9]\d{9}$/.test(nationalNumber);
-      setPhoneValid(isValid);
-      
-      // Update error message if invalid
-      if (!isValid && nationalNumber.length > 0) {
-        setErrors(prev => ({
-          ...prev,
-          phone: nationalNumber.length !== 10 
-            ? "Please enter exactly 10 digits" 
-            : "Please enter a valid 10-digit number starting with 6,7,8, or 9"
-        }));
-      } else if (isValid) {
-        setErrors(prev => ({
-          ...prev,
-          phone: ""
-        }));
-      }
-      return;
-    }
+    // 7 to 14 digits, any country
+    const isValid = /^\d{7,14}$/.test(nationalNumber);
+    setPhoneValid(isValid);
 
-    // For other countries, you can either reject or use the plugin's validation
-    // For now, we'll reject any non-Indian numbers
-    if (nationalNumber.length > 0) {
-      setPhoneValid(false);
-      setErrors(prev => ({
+    // Update error message
+    if (nationalNumber.length === 0) {
+      setErrors((prev) => ({ ...prev, phone: "" }));
+    } else if (!isValid) {
+      setErrors((prev) => ({
         ...prev,
-        phone: "Only Indian phone numbers (10 digits) are allowed"
+        phone: "Please enter a valid number (7 to 14 digits)",
       }));
     } else {
-      setPhoneValid(false);
+      setErrors((prev) => ({ ...prev, phone: "" }));
     }
   };
 
@@ -161,6 +142,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
 
   /* =========================================
      INTL-TEL-INPUT (same field/UI as the opt-in gate)
+     All countries selectable. India is the default flag.
   ========================================= */
   useEffect(() => {
     if (!isOpen) return;
@@ -172,7 +154,6 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
         itiRef.current = window.intlTelInput(el, {
           ...ITI_OPTIONS,
           initialCountry: "in",
-          onlyCountries: ["in"],
         });
         // Bind directly to the element so validity updates on every change,
         // independent of React's synthetic events on the plugin-managed node.
@@ -186,7 +167,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
         itiRef.current = null;
       }
       recheckPhone();
-      // setNumber / utils can populate a tick later — re-check then too.
+      // setNumber / utils can populate a tick later - re-check then too.
       window.setTimeout(recheckPhone, 300);
     };
 
@@ -221,7 +202,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       setErrors(initialErrors);
       setStatusMessage("");
       setIsSubmitting(false);
-      
+
       // Reset phone input value if it exists
       if (phoneInputRef.current) {
         phoneInputRef.current.value = "";
@@ -259,19 +240,12 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     }
 
     if (!phoneValid) {
-      // Specific error message for 10 digit requirement
       const phoneInput = phoneInputRef.current;
-      if (phoneInput) {
-        const rawNumber = phoneInput.value.replace(/\D/g, "");
-        if (rawNumber.length === 0) {
-          newErrors.phone = "Please enter your phone number";
-        } else if (rawNumber.length !== 10) {
-          newErrors.phone = "Please enter exactly 10 digits";
-        } else {
-          newErrors.phone = "Please enter a valid 10-digit number starting with 6,7,8, or 9";
-        }
+      const rawNumber = phoneInput ? phoneInput.value.replace(/\D/g, "") : "";
+      if (rawNumber.length === 0) {
+        newErrors.phone = "Please enter your phone number";
       } else {
-        newErrors.phone = "Please enter exactly 10 digits";
+        newErrors.phone = "Please enter a valid number (7 to 14 digits)";
       }
       valid = false;
     }
@@ -308,9 +282,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     setIsSubmitting(true);
 
     // Derive both forms of the number from the phone field:
-    //  • phoneNational  -> national significant digits (10 for India). This is
-    //    what main.php validates/stores, so we MUST send this (not the +91...
-    //    international form, which the server rejects as "not 10 digits").
+    //  • phoneNational  -> national significant digits (country agnostic).
     //  • phoneIntl      -> full international number (E.164, e.g. +919876543210),
     //    forwarded to TidyCal so the booking keeps the country code.
     const iti = itiRef.current;
@@ -332,11 +304,11 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     }
     const phoneIntl = e164 || rawNational;
 
-    // Validate one more time that we have exactly 10 digits
-    if (phoneNational.length !== 10 || !/^[6-9]\d{9}$/.test(phoneNational)) {
-      setErrors(prev => ({
+    // Validate one more time: 7 to 14 national digits
+    if (!/^\d{7,14}$/.test(phoneNational)) {
+      setErrors((prev) => ({
         ...prev,
-        phone: "Please enter exactly 10 digits starting with 6,7,8, or 9"
+        phone: "Please enter a valid number (7 to 14 digits)",
       }));
       setIsSubmitting(false);
       return;
@@ -511,9 +483,9 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
                 onBlur={recheckPhone}
                 autoComplete="tel"
                 inputMode="numeric"
-                placeholder="Enter 10-digit phone number"
-                pattern="[6-9]\d{9}"
-                maxLength={10}
+                placeholder="Enter your phone number"
+                pattern="\d{7,14}"
+                maxLength={14}
               />
             </div>
 
