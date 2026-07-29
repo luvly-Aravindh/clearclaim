@@ -40,7 +40,7 @@ function App() {
   };
 
   // Opt-in Page -> Landing Page -> Book a Call (TidyCal)
-  if (view === "optin") {
+  if (view === "landing") {
     return <ClearClaimLanding onComplete={handleOptinComplete} />;
   }
 
