@@ -388,231 +388,241 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     "w-full border rounded-xl px-5 py-4 outline-none focus:border-[#00BE5D] focus:ring-4 focus:ring-green-100 transition-all";
 
   return (
+    /* OVERLAY is the scroll container. On short viewports (100% zoom, small
+       laptop windows) the entire overlay scrolls so nothing gets clipped. */
     <div
       id="bookModal"
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md p-4"
+      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-md overflow-y-auto"
       aria-hidden={!isOpen}
-      onClick={handleBackdropClick}
     >
+      {/* min-h-full flex wrapper: centers the card when it fits, and grows
+          past the viewport (letting the overlay scroll) when it does not.
+          This is the pattern that survives any zoom level. Backdrop click
+          lives here so taps on the padding around the card close it. */}
+      <div
+        className="flex min-h-full items-center justify-center p-4"
+        onClick={handleBackdropClick}
+      >
 
-      {/* Modal Card */}
-      <div className="relative bg-white w-full max-w-[540px] rounded-[24px] p-5 md:p-5 shadow-2xl max-h-[95vh] sm:overflow-y-hidden overflow-y-auto overflow-x-hidden">
+        {/* Modal Card - natural height, no inner scroll needed */}
+        <div className="relative bg-white w-full max-w-[540px] rounded-[24px] p-5 md:p-5 shadow-2xl my-4">
 
-        {/* Close Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute top-4 right-2 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-[24px] flex items-center justify-center transition-all"
-        >
-          ×
-        </button>
+          {/* Close Button */}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-4 right-2 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 text-[24px] flex items-center justify-center transition-all z-10"
+          >
+            ×
+          </button>
 
-        {/* Title */}
-        <h2 className="text-[30px] leading-tight font-black text-[#161d34] mb-2">
-          Book Your Free Valuation Call
-        </h2>
+          {/* Title */}
+          <h2 className="text-[30px] leading-tight font-black text-[#161d34] mb-2 pr-12">
+            Book Your Free Valuation Call
+          </h2>
 
-        <p className="text-[15px] text-gray-500 mb-7">
-          No original documents required to get started.
-        </p>
+          <p className="text-[15px] text-gray-500 mb-7">
+            No original documents required to get started.
+          </p>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
 
-          {/* Honeypot */}
-          <input
-            type="text"
-            name="website"
-            value={formData.website}
-            onChange={handleChange}
-            className="hp-field"
-            autoComplete="off"
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-
-          {/* Name */}
-          <div>
-            <label
-              htmlFor="vName"
-              className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
-            >
-              Your Name
-            </label>
-
+            {/* Honeypot */}
             <input
-              ref={nameInputRef}
               type="text"
-              id="vName"
-              name="name"
-              value={formData.name}
+              name="website"
+              value={formData.website}
               onChange={handleChange}
-              placeholder="Enter your full name"
-              maxLength={80}
-              className={`${inputBase} ${
-                errors.name
-                  ? "border-red-500 field-error"
-                  : "border-gray-300"
-              }`}
+              className="hp-field"
+              autoComplete="off"
+              tabIndex={-1}
+              aria-hidden="true"
             />
 
-            {errors.name && (
-              <p className="mt-2 text-red-500 text-sm font-semibold">
-                {errors.name}
-              </p>
-            )}
-          </div>
+            {/* Name */}
+            <div>
+              <label
+                htmlFor="vName"
+                className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
+              >
+                Your Name
+              </label>
 
-          {/* Phone */}
-          <div>
-            <label
-              htmlFor="vPhone"
-              className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
-            >
-              Phone Number
-            </label>
-
-            <div className={`cc-phone-field ${errors.phone ? "has-error" : ""}`}>
               <input
-                type="tel"
-                id="vPhone"
-                name="phone"
-                ref={phoneInputRef}
-                onInput={handlePhoneInput}
-                onBlur={recheckPhone}
-                autoComplete="tel"
-                inputMode="numeric"
-                placeholder="Enter your phone number"
-                pattern="\d{7,14}"
-                maxLength={14}
+                ref={nameInputRef}
+                type="text"
+                id="vName"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                maxLength={80}
+                className={`${inputBase} ${
+                  errors.name
+                    ? "border-red-500 field-error"
+                    : "border-gray-300"
+                }`}
+              />
+
+              {errors.name && (
+                <p className="mt-2 text-red-500 text-sm font-semibold">
+                  {errors.name}
+                </p>
+              )}
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label
+                htmlFor="vPhone"
+                className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
+              >
+                Phone Number
+              </label>
+
+              <div className={`cc-phone-field ${errors.phone ? "has-error" : ""}`}>
+                <input
+                  type="tel"
+                  id="vPhone"
+                  name="phone"
+                  ref={phoneInputRef}
+                  onInput={handlePhoneInput}
+                  onBlur={recheckPhone}
+                  autoComplete="tel"
+                  inputMode="numeric"
+                  placeholder="Enter your phone number"
+                  pattern="\d{7,14}"
+                  maxLength={14}
+                />
+              </div>
+
+              {errors.phone && (
+                <p className="mt-2 text-red-500 text-sm font-semibold">
+                  {errors.phone}
+                </p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label
+                htmlFor="vEmail"
+                className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
+              >
+                Email Address
+              </label>
+
+              <input
+                type="email"
+                id="vEmail"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                maxLength={120}
+                className={`${inputBase} ${
+                  errors.email
+                    ? "border-red-500 field-error"
+                    : "border-gray-300"
+                }`}
+              />
+
+              {errors.email && (
+                <p className="mt-2 text-red-500 text-sm font-semibold">
+                  {errors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Case */}
+            <div>
+              <label
+                htmlFor="vCase"
+                className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
+              >
+                Case Type
+              </label>
+
+              <select
+                id="vCase"
+                name="case"
+                value={formData.case}
+                onChange={handleChange}
+                className={`${inputBase} bg-white ${
+                  errors.case
+                    ? "border-red-500 field-error"
+                    : "border-gray-300"
+                }`}
+              >
+                <option value="">Select your situation</option>
+                <option value="old_certificates">
+                  I have old physical share certificates
+                </option>
+                <option value="deceased_family">
+                  A family member passed away with shares
+                </option>
+                <option value="unsure">
+                  I am unsure of the category
+                </option>
+              </select>
+
+              {errors.case && (
+                <p className="mt-2 text-red-500 text-sm font-semibold">
+                  {errors.case}
+                </p>
+              )}
+            </div>
+
+            {/* Company */}
+            <div>
+              <label
+                htmlFor="vCompany"
+                className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
+              >
+                Company Name
+              </label>
+
+              <input
+                type="text"
+                id="vCompany"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                placeholder="e.g. Reliance Industries"
+                maxLength={100}
+                className={`${inputBase} border-gray-300`}
               />
             </div>
 
-            {errors.phone && (
-              <p className="mt-2 text-red-500 text-sm font-semibold">
-                {errors.phone}
-              </p>
+            {/* Status message */}
+            {statusMessage && (
+              <div className="text-center text-sm font-bold rounded-xl py-3 px-4 text-red-500 bg-red-50 border border-red-200">
+                {statusMessage}
+              </div>
             )}
-          </div>
 
-          {/* Email */}
-          <div>
-            <label
-              htmlFor="vEmail"
-              className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
-            >
-              Email Address
-            </label>
-
-            <input
-              type="email"
-              id="vEmail"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              maxLength={120}
-              className={`${inputBase} ${
-                errors.email
-                  ? "border-red-500 field-error"
-                  : "border-gray-300"
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={!isFormValid || isSubmitting}
+              className={`w-full py-4 rounded-xl text-white font-black transition-all ${
+                !isFormValid || isSubmitting
+                  ? "opacity-40 pointer-events-none"
+                  : ""
               }`}
-            />
-
-            {errors.email && (
-              <p className="mt-2 text-red-500 text-sm font-semibold">
-                {errors.email}
-              </p>
-            )}
-          </div>
-
-          {/* Case */}
-          <div>
-            <label
-              htmlFor="vCase"
-              className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
+              style={{
+                background:
+                  "linear-gradient(180deg,#3D6FF0 0%,#2450C4 100%)",
+              }}
             >
-              Case Type
-            </label>
-
-            <select
-              id="vCase"
-              name="case"
-              value={formData.case}
-              onChange={handleChange}
-              className={`${inputBase} bg-white ${
-                errors.case
-                  ? "border-red-500 field-error"
-                  : "border-gray-300"
-              }`}
-            >
-              <option value="">Select your situation</option>
-              <option value="old_certificates">
-                I have old physical share certificates
-              </option>
-              <option value="deceased_family">
-                A family member passed away with shares
-              </option>
-              <option value="unsure">
-                I am unsure of the category
-              </option>
-            </select>
-
-            {errors.case && (
-              <p className="mt-2 text-red-500 text-sm font-semibold">
-                {errors.case}
-              </p>
-            )}
-          </div>
-
-          {/* Company */}
-          <div>
-            <label
-              htmlFor="vCompany"
-              className="block mb-2 text-[12px] font-black uppercase tracking-[0.06em] text-[#161d34]"
-            >
-              Company Name
-            </label>
-
-            <input
-              type="text"
-              id="vCompany"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              placeholder="e.g. Reliance Industries"
-              maxLength={100}
-              className={`${inputBase} border-gray-300`}
-            />
-          </div>
-
-          {/* Status message */}
-          {statusMessage && (
-            <div className="text-center text-sm font-bold rounded-xl py-3 px-4 text-red-500 bg-red-50 border border-red-200">
-              {statusMessage}
-            </div>
-          )}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={!isFormValid || isSubmitting}
-            className={`w-full py-4 rounded-xl text-white font-black transition-all ${
-              !isFormValid || isSubmitting
-                ? "opacity-40 pointer-events-none"
-                : ""
-            }`}
-            style={{
-              background:
-                "linear-gradient(180deg,#3D6FF0 0%,#2450C4 100%)",
-            }}
-          >
-            {isSubmitting
-              ? "Submitting..."
-              : "Book Free Valuation Call →"}
-          </button>
-        </form>
+              {isSubmitting
+                ? "Submitting..."
+                : "Book Free Valuation Call →"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
