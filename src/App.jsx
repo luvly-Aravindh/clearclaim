@@ -1,11 +1,8 @@
 import { useState } from "react";
 import "./App.css";
 
-import { Routes, Route, useNavigate } from "react-router-dom";
-
-
 import ClearClaimLanding from "./Components/ClearClaimLanding";
-
+import { loadLead } from "./Components/ccLead";
 import TopBar from "./Components/TopBar";
 import HeroSection from "./Components/HeroSection";
 import ProofBar from "./Components/ProofBar";
@@ -24,28 +21,31 @@ import Footer from "./Components/Footer";
 import BookModal from "./Components/BookModal";
 import ProofTicker from "./Components/ProofTicker";
 
-import ThankYou from "./Components/ThankYouPage";
-
-
-
-function MainPage() {
-
+function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // ClearClaimLanding (the opt-in gate) is the entry point on every page
+  // load. The landing page is reached only by submitting the opt-in (the
+  // funnel functionality), so a refresh always returns to the opt-in gate.
+  const [view, setView] = useState("optin");
+  const [lead, setLead] = useState(() => loadLead());
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const handleOptinComplete = (submittedLead) => {
+    setLead(submittedLead);
+    setView("landing");
+    window.scrollTo(0, 0);
   };
 
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
+  // Opt-in Page -> Landing Page -> Book a Call (TidyCal)
+  if (view === "optin") {
+    return <ClearClaimLanding onComplete={handleOptinComplete} />;
+  }
 
   return (
     <>
-
       <TopBar onOpenModal={openModal} />
 
       <HeroSection onOpenModal={openModal} />
@@ -58,7 +58,6 @@ function MainPage() {
 
       <SplitSectionTwo />
 
-
       <CtaStrip
         label="Get My Free Share Valuation"
         bullets={[
@@ -68,53 +67,36 @@ function MainPage() {
         onOpenModal={openModal}
       />
 
-
       <Checklist />
-
 
       <CtaStrip
         label="Submit My Certificate Details Now"
-        bullets={[
-          "Free",
-          "2 minutes",
-          "No commitment"
-        ]}
+        bullets={["Free", "2 minutes", "No commitment"]}
         bg="bg-white"
         onOpenModal={openModal}
       />
-
 
       <SplitSectionThree />
 
       <Makers />
 
-
       <CtaStrip
         label="Speak With A Recovery Specialist"
-        bullets={[
-          "Free valuation",
-          "No originals required"
-        ]}
+        bullets={["Free valuation", "No originals required"]}
         bg="bg-white"
         onOpenModal={openModal}
       />
-
 
       <ThreeSteps onOpenModal={openModal} />
 
       <Guarantee />
 
-
       <CtaStrip
         label="Get Your Free Valuation"
-        bullets={[
-          "Zero risk",
-          "No commitment"
-        ]}
+        bullets={["Zero risk", "No commitment"]}
         bg="bg-white"
         onOpenModal={openModal}
       />
-
 
       <Testimonials />
 
@@ -124,93 +106,9 @@ function MainPage() {
 
       <ProofTicker />
 
-
-      <BookModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
-
+      <BookModal isOpen={isModalOpen} onClose={closeModal} prefill={lead} />
     </>
   );
 }
-
-
-
-
-
-function OptinPage() {
-
-  const navigate = useNavigate();
-
-
-  const handleOptinComplete = (leadData) => {
-
-
-    // save user details
-    localStorage.setItem(
-      "leadData",
-      JSON.stringify(leadData)
-    );
-
-
-    // redirect main page
-    navigate("/main");
-
-  };
-
-
-  return (
-
-    <ClearClaimLanding
-      onComplete={handleOptinComplete}
-    />
-
-  );
-
-}
-
-
-
-
-
-function App() {
-
-
-  return (
-
-    <Routes>
-
-
-      <Route
-        path="/"
-        element={<OptinPage />}
-      />
-
-
-      <Route
-        path="/optin"
-        element={<OptinPage />}
-      />
-
-
-      <Route
-        path="/main"
-        element={<MainPage />}
-      />
-
-
-      <Route
-        path="/thankyou"
-        element={<ThankYou />}
-      />
-
-
-    </Routes>
-
-  );
-
-}
-
-
 
 export default App;

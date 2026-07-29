@@ -38,10 +38,83 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   const itiRef = useRef(null);
   const [phoneValid, setPhoneValid] = useState(false);
 
-  /* Re-evaluate the phone field using the SAME rules as the opt-in gate
-     (India = exactly 10 starting 6-9; others 7-14; dummy numbers rejected). */
+  /* =========================================
+     HANDLE PHONE INPUT - ONLY 10 DIGITS
+  ========================================= */
+  const handlePhoneInput = (e) => {
+    const input = e.target;
+    // Remove all non-digit characters
+    let value = input.value.replace(/\D/g, "");
+    
+    // Limit to 10 digits
+    if (value.length > 10) {
+      value = value.slice(0, 10);
+    }
+    
+    // Update the input value
+    input.value = value;
+    
+    // Trigger validation
+    recheckPhone();
+  };
+
+  /* Re-evaluate the phone field - now checking for exactly 10 digits */
   const recheckPhone = () => {
-    setPhoneValid(isValidPhone(itiRef.current, phoneInputRef.current?.value));
+    const iti = itiRef.current;
+    const input = phoneInputRef.current;
+    
+    if (!iti || !input) {
+      setPhoneValid(false);
+      return;
+    }
+
+    // Get the raw national number (digits only) - should already be 10 digits max
+    const rawNumber = input.value.replace(/\D/g, "");
+    
+    // Get the country data
+    const countryData = iti.getSelectedCountryData ? iti.getSelectedCountryData() : null;
+    const dialCode = countryData?.dialCode || "";
+    
+    // Remove the country code from the raw number if present
+    let nationalNumber = rawNumber;
+    if (dialCode && rawNumber.startsWith(dialCode)) {
+      nationalNumber = rawNumber.slice(dialCode.length);
+    }
+
+    // For India (+91), check exactly 10 digits starting with 6,7,8,9
+    if (dialCode === "91") {
+      // Check if exactly 10 digits and starts with 6-9
+      const isValid = /^[6-9]\d{9}$/.test(nationalNumber);
+      setPhoneValid(isValid);
+      
+      // Update error message if invalid
+      if (!isValid && nationalNumber.length > 0) {
+        setErrors(prev => ({
+          ...prev,
+          phone: nationalNumber.length !== 10 
+            ? "Please enter exactly 10 digits" 
+            : "Please enter a valid 10-digit number starting with 6,7,8, or 9"
+        }));
+      } else if (isValid) {
+        setErrors(prev => ({
+          ...prev,
+          phone: ""
+        }));
+      }
+      return;
+    }
+
+    // For other countries, you can either reject or use the plugin's validation
+    // For now, we'll reject any non-Indian numbers
+    if (nationalNumber.length > 0) {
+      setPhoneValid(false);
+      setErrors(prev => ({
+        ...prev,
+        phone: "Only Indian phone numbers (10 digits) are allowed"
+      }));
+    } else {
+      setPhoneValid(false);
+    }
   };
 
   /* =========================================
@@ -88,9 +161,6 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
 
   /* =========================================
      INTL-TEL-INPUT (same field/UI as the opt-in gate)
-     The modal mounts fresh on each open, so init when it opens and
-     destroy on close. Seed from the opt-in lead's full WhatsApp number
-     (E.164) so the flag + national digits populate automatically.
   ========================================= */
   useEffect(() => {
     if (!isOpen) return;
@@ -99,10 +169,14 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       const el = phoneInputRef.current;
       if (!el || !window.intlTelInput || itiRef.current) return;
       try {
-        itiRef.current = window.intlTelInput(el, ITI_OPTIONS);
+        itiRef.current = window.intlTelInput(el, {
+          ...ITI_OPTIONS,
+          initialCountry: "in",
+          onlyCountries: ["in"],
+        });
         // Bind directly to the element so validity updates on every change,
         // independent of React's synthetic events on the plugin-managed node.
-        el.addEventListener("input", recheckPhone);
+        el.addEventListener("input", handlePhoneInput);
         el.addEventListener("blur", recheckPhone);
         el.addEventListener("countrychange", recheckPhone);
         if (prefill?.whatsapp) {
@@ -122,7 +196,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       if (typeof detachLoader === "function") detachLoader();
       const el = phoneInputRef.current;
       if (el) {
-        el.removeEventListener("input", recheckPhone);
+        el.removeEventListener("input", handlePhoneInput);
         el.removeEventListener("blur", recheckPhone);
         el.removeEventListener("countrychange", recheckPhone);
       }
@@ -137,9 +211,6 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
 
   /* =========================================
      RESET FORM EACH TIME MODAL OPENS
-     Email is pre-filled from the opt-in lead so the visitor never re-types
-     it. The WhatsApp number is seeded into the intl-tel-input field above.
-     Name / case / company stay blank for the visitor to complete.
   ========================================= */
   useEffect(() => {
     if (isOpen) {
@@ -150,6 +221,11 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       setErrors(initialErrors);
       setStatusMessage("");
       setIsSubmitting(false);
+      
+      // Reset phone input value if it exists
+      if (phoneInputRef.current) {
+        phoneInputRef.current.value = "";
+      }
     }
   }, [isOpen, prefill]);
 
@@ -183,7 +259,20 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     }
 
     if (!phoneValid) {
-      newErrors.phone = "Please enter a valid phone number";
+      // Specific error message for 10 digit requirement
+      const phoneInput = phoneInputRef.current;
+      if (phoneInput) {
+        const rawNumber = phoneInput.value.replace(/\D/g, "");
+        if (rawNumber.length === 0) {
+          newErrors.phone = "Please enter your phone number";
+        } else if (rawNumber.length !== 10) {
+          newErrors.phone = "Please enter exactly 10 digits";
+        } else {
+          newErrors.phone = "Please enter a valid 10-digit number starting with 6,7,8, or 9";
+        }
+      } else {
+        newErrors.phone = "Please enter exactly 10 digits";
+      }
       valid = false;
     }
 
@@ -243,6 +332,16 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     }
     const phoneIntl = e164 || rawNational;
 
+    // Validate one more time that we have exactly 10 digits
+    if (phoneNational.length !== 10 || !/^[6-9]\d{9}$/.test(phoneNational)) {
+      setErrors(prev => ({
+        ...prev,
+        phone: "Please enter exactly 10 digits starting with 6,7,8, or 9"
+      }));
+      setIsSubmitting(false);
+      return;
+    }
+
     // build FormData to match https://getnos.io/clearclaim-lp/main.php fields
     const payload = new FormData();
     payload.append("website", formData.website); // honeypot
@@ -253,9 +352,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
     payload.append("case", formData.case);
     payload.append("company", formData.company.trim());
 
-    // TidyCal prefills its booking form from URL query params. We pass the
-    // visitor's name + email and forward the full international number under
-    // every likely phone key so it lands regardless of the booking config.
+    // TidyCal prefills its booking form from URL query params
     const tidyCalUrl =
       TIDYCAL_BOOKING_URL +
       (TIDYCAL_BOOKING_URL.includes("?") ? "&" : "?") +
@@ -269,12 +366,6 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
 
     // ---------------------------------------------------------------------
     // ULTRA-FAST REDIRECT
-    // The slow part is the server's email send (main.php runs mail() before
-    // it answers on success). We do NOT wait for that. `keepalive: true` lets
-    // the POST finish in the background even after we navigate away, so the
-    // lead is still saved + emailed. We only pause for a brief window to catch
-    // a "duplicate email" reply (main.php returns that instantly, before any
-    // mail()); otherwise we redirect immediately.
     // ---------------------------------------------------------------------
     const capture = fetch("https://getnos.io/clearclaim-lp/main.php", {
       method: "POST",
@@ -416,11 +507,13 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
                 id="vPhone"
                 name="phone"
                 ref={phoneInputRef}
-                onInput={recheckPhone}
+                onInput={handlePhoneInput}
                 onBlur={recheckPhone}
                 autoComplete="tel"
-                inputMode="tel"
-                placeholder="WhatsApp number"
+                inputMode="numeric"
+                placeholder="Enter 10-digit phone number"
+                pattern="[6-9]\d{9}"
+                maxLength={10}
               />
             </div>
 
