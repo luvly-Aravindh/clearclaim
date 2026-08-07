@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./BookModal.css";
-import { ensureIntlTelInput, ITI_OPTIONS, isValidPhone } from "./phoneField";
+import { ensureIntlTelInput, ITI_OPTIONS } from "./phoneField";
 
 /* =====================================================================
    BOOKING URL. Single source of truth.
@@ -9,6 +9,48 @@ import { ensureIntlTelInput, ITI_OPTIONS, isValidPhone } from "./phoneField";
    etc.), so the visitor never re-types what they already gave.
    ===================================================================== */
 const TIDYCAL_BOOKING_URL = "https://tidycal.com/meetclearclaim/strategy-call";
+
+/* =====================================================================
+   GETNOS DESK
+   The only backend. Replaces getnos.io/clearclaim-lp/main.php.
+
+   THE PHP USED TO BLOCK REPEAT EMAILS. It answered status:"exists" and
+   the modal showed "You already used this email". Desk has no equivalent.
+   Its duplicate:true only means the identical lead was posted again
+   inside roughly 15 minutes, which is a double click guard, not a
+   permanent uniqueness rule. That gate is therefore gone.
+
+   THE KEY IS ORIGIN LOCKED. Desk returns 403 "Origin not allowed" for
+   anything outside the allowlist for this key.
+   Verified allowed:  http://localhost:5173, http://localhost:3000
+   Verified blocked:  https://getnos.io, https://meetclearclaim.com,
+                      https://www.meetclearclaim.com, https://clearclaim.in
+   Add the live domain in Desk before launch, or every production lead
+   403s while local testing keeps passing.
+
+   SECURITY: this key ships in the public bundle and is readable with
+   devtools. The origin lock is what keeps that survivable.
+   ===================================================================== */
+const DESK_URL = "https://deskbackend.getnos.io/v1/lead";
+const DESK_API_KEY = "lh_7a-fckZfKIe9xXyO7pdnv2JT0yvVF8tDGrKWZ-R6lI4";
+const LEAD_SOURCE = "clearclaim-lp";
+
+/* In a dev build the redirect is held and the real Desk error is shown,
+   so a misconfiguration is impossible to miss. In production the visitor
+   always reaches TidyCal. Vite sets import.meta.env.DEV. */
+let IS_DEV = false;
+try {
+  IS_DEV = Boolean(import.meta.env && import.meta.env.DEV);
+} catch {
+  IS_DEV = false;
+}
+
+/* Sheet readability: send the label a human picked, not the option code. */
+const CASE_LABELS = {
+  old_certificates: "I have old physical share certificates",
+  deceased_family: "A family member passed away with shares",
+  unsure: "I am unsure of the category",
+};
 
 const initialFormState = {
   website: "", // honeypot
@@ -27,6 +69,91 @@ const initialErrors = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/* ---------------------------------------------------------------------
+   POST TO DESK
+   Resolves rather than throws, so the caller can race it against a timer
+   without an unhandled rejection.
+
+   Desk signals failure two ways, so both are checked:
+     401  Invalid API key      config problem, a retry fails identically
+     403  Origin not allowed   config problem, a retry fails identically
+     5xx / 429 / network       transient, worth one retry
+   A 200 carrying status:"error" counts as a failure too, because testing
+   res.ok alone would let it through as a success.
+   --------------------------------------------------------------------- */
+const postToDesk = async (fields) => {
+  const attempt = async () => {
+    const res = await fetch(DESK_URL, {
+      method: "POST",
+      keepalive: true, // finishes even after the redirect fires
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${DESK_API_KEY}`,
+      },
+      body: JSON.stringify(fields),
+    });
+
+    const text = await res.text();
+    let data = {};
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      data = { message: text };
+    }
+
+    if (data.duplicate) return { ok: true, data };
+    if (res.ok && data.status !== "error") return { ok: true, data };
+
+    return {
+      ok: false,
+      status: res.status,
+      message: data.message || `Desk responded ${res.status}`,
+      payload: data,
+      retryable: res.status === 429 || res.status >= 500,
+    };
+  };
+
+  let result;
+  try {
+    result = await attempt();
+  } catch (networkErr) {
+    result = {
+      ok: false,
+      status: 0,
+      message: networkErr.message || "Network error",
+      retryable: true,
+    };
+  }
+
+  if (!result.ok && result.retryable) {
+    console.warn("[desk] transient failure, retrying once:", result.message);
+    await sleep(1200);
+    try {
+      result = await attempt();
+    } catch (networkErr) {
+      result = {
+        ok: false,
+        status: 0,
+        message: networkErr.message || "Network error",
+        retryable: true,
+      };
+    }
+  }
+
+  if (!result.ok) {
+    console.error(
+      `[desk] LEAD NOT SAVED. HTTP ${result.status}: ${result.message}`,
+      result.payload
+    );
+  } else if (IS_DEV) {
+    console.info("[desk] lead accepted:", result.data);
+  }
+
+  return result;
+};
+
 const BookModal = ({ isOpen, onClose, prefill }) => {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrors);
@@ -36,6 +163,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   const nameInputRef = useRef(null);
   const phoneInputRef = useRef(null);
   const itiRef = useRef(null);
+  const submittingRef = useRef(false); // survives re-renders, blocks double posts
   const [phoneValid, setPhoneValid] = useState(false);
 
   /* =========================================
@@ -202,6 +330,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       setErrors(initialErrors);
       setStatusMessage("");
       setIsSubmitting(false);
+      submittingRef.current = false;
 
       // Reset phone input value if it exists
       if (phoneInputRef.current) {
@@ -271,7 +400,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isSubmitting) return;
+    if (isSubmitting || submittingRef.current) return;
 
     setStatusMessage("");
 
@@ -279,6 +408,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       return;
     }
 
+    submittingRef.current = true;
     setIsSubmitting(true);
 
     // Derive both forms of the number from the phone field:
@@ -311,18 +441,28 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
         phone: "Please enter a valid number (7 to 14 digits)",
       }));
       setIsSubmitting(false);
+      submittingRef.current = false;
       return;
     }
 
-    // build FormData to match https://getnos.io/clearclaim-lp/main.php fields
-    const payload = new FormData();
-    payload.append("website", formData.website); // honeypot
-    payload.append("name", formData.name.trim());
-    payload.append("phone", phoneNational);
-    payload.append("phone_intl", phoneIntl); // full international (with country code)
-    payload.append("email", formData.email.trim());
-    payload.append("case", formData.case);
-    payload.append("company", formData.company.trim());
+    // Honeypot. A bot fills every input it finds. Look booked, save nothing.
+    if (formData.website.trim()) {
+      window.location.href = TIDYCAL_BOOKING_URL;
+      return;
+    }
+
+    // Flat fields, one Sheet column each.
+    const deskFields = {
+      form: "contact",
+      source: LEAD_SOURCE,
+      name: formData.name.trim(),
+      email: formData.email.trim().toLowerCase(),
+      phone: phoneIntl,                 // E.164, keeps the country code
+      phone_national: phoneNational,    // local digits, easier to dial
+      case: CASE_LABELS[formData.case] || formData.case,
+      company: formData.company.trim(),
+      honeypot: formData.website,
+    };
 
     // TidyCal prefills its booking form from URL query params
     const tidyCalUrl =
@@ -338,38 +478,28 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
 
     // ---------------------------------------------------------------------
     // ULTRA-FAST REDIRECT
+    // keepalive means the request completes even after navigation, so the
+    // visitor never waits on Desk. In a dev build we wait for the real
+    // answer instead, so a 401 or 403 cannot hide behind a redirect.
     // ---------------------------------------------------------------------
-    const capture = fetch("https://getnos.io/clearclaim-lp/main.php", {
-      method: "POST",
-      body: payload,
-      keepalive: true,
-    })
-      .then((r) => r.json())
-      .catch(() => null);
+    const capture = postToDesk(deskFields);
 
-    const result = await Promise.race([
-      capture,
-      new Promise((resolve) => setTimeout(() => resolve("timeout"), 1000)),
-    ]);
-
-    /* EMAIL EXISTS (arrives fast, before redirect) */
-    if (result && result.status === "exists") {
-      setErrors((prev) => ({
-        ...prev,
-        email: "You already used this email. Please use another email.",
-      }));
-      setIsSubmitting(false);
-      return;
+    if (IS_DEV) {
+      const result = await capture;
+      if (!result.ok) {
+        setStatusMessage(
+          `Desk rejected this lead. HTTP ${result.status}: ${result.message}. ` +
+          `Origin ${window.location.origin} may not be on the allowlist for this key. ` +
+          `This notice only appears in a dev build.`
+        );
+        setIsSubmitting(false);
+        submittingRef.current = false;
+        return;
+      }
+    } else {
+      await Promise.race([capture, sleep(1000)]);
     }
 
-    /* EXPLICIT VALIDATION ERROR (also fast) */
-    if (result && result.status === "error") {
-      setStatusMessage(result.message || "Something went wrong");
-      setIsSubmitting(false);
-      return;
-    }
-
-    /* SUCCESS or slow server -> go to TidyCal now (capture continues via keepalive) */
     window.location.href = tidyCalUrl;
   };
 
@@ -598,7 +728,7 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
 
             {/* Status message */}
             {statusMessage && (
-              <div className="text-center text-sm font-bold rounded-xl py-3 px-4 text-red-500 bg-red-50 border border-red-200">
+              <div className="text-center text-sm font-bold rounded-xl py-3 px-4 text-red-500 bg-red-50 border border-red-200 leading-relaxed">
                 {statusMessage}
               </div>
             )}
