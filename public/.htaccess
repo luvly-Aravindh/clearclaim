@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Thank-you page at /thankyou (with or without trailing slash)
+RewriteRule ^thankyou/?$ /thankyou/index.html [L]
+
+# SPA: serve index.html for client-side routes (skip real files/dirs)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

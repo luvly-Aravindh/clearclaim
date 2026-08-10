@@ -34,6 +34,7 @@ const TIDYCAL_BOOKING_URL = "https://tidycal.com/meetclearclaim/strategy-call";
 const DESK_URL = "https://deskbackend.getnos.io/v1/lead";
 const DESK_API_KEY = "lh_0I2Q-4qnyaoxyqz6UNOd-8b5ooTE5ahcS_Dirj5rrkE";
 const LEAD_SOURCE = "clearclaim-lp";
+const DESK_EMAIL_SUBJECT = "New Valuation Lead Received - Clearclaim";
 
 /* In a dev build the redirect is held and the real Desk error is shown,
    so a misconfiguration is impossible to miss. In production the visitor
@@ -73,17 +74,28 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /* ---------------------------------------------------------------------
    POST TO DESK
-   Resolves rather than throws, so the caller can race it against a timer
-   without an unhandled rejection.
+   One flat JSON object per submission — each answer is its own key.
+   `subject` sets the notification email title; it is not stored as a
+   lead field. Resolves rather than throws so the caller can race against
+   a redirect timer without an unhandled rejection.
 
    Desk signals failure two ways, so both are checked:
      401  Invalid API key      config problem, a retry fails identically
      403  Origin not allowed   config problem, a retry fails identically
      5xx / 429 / network       transient, worth one retry
-   A 200 carrying status:"error" counts as a failure too, because testing
-   res.ok alone would let it through as a success.
+   A 200 carrying status:"error" counts as a failure too.
+   { duplicate: true } within ~15 min for identical payloads = success.
    --------------------------------------------------------------------- */
+const buildDeskPayload = (fields) => ({
+  form: "contact",
+  subject: DESK_EMAIL_SUBJECT,
+  honeypot: fields.honeypot ?? "",
+  ...fields,
+});
+
 const postToDesk = async (fields) => {
+  const payload = buildDeskPayload(fields);
+
   const attempt = async () => {
     const res = await fetch(DESK_URL, {
       method: "POST",
@@ -92,7 +104,7 @@ const postToDesk = async (fields) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${DESK_API_KEY}`,
       },
-      body: JSON.stringify(fields),
+      body: JSON.stringify(payload),
     });
 
     const text = await res.text();
@@ -104,7 +116,12 @@ const postToDesk = async (fields) => {
     }
 
     if (data.duplicate) return { ok: true, data };
-    if (res.ok && data.status !== "error") return { ok: true, data };
+    if (
+      res.ok &&
+      (data.status === "success" || data.status !== "error")
+    ) {
+      return { ok: true, data };
+    }
 
     return {
       ok: false,
@@ -451,16 +468,17 @@ const BookModal = ({ isOpen, onClose, prefill }) => {
       return;
     }
 
-    // Flat fields, one Sheet column each.
+    // Flat fields — one Desk/Sheet column each (never a bundled "message").
     const deskFields = {
-      form: "contact",
       source: LEAD_SOURCE,
+      page: window.location.href,
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
-      phone: phoneIntl,                 // E.164, keeps the country code
-      phone_national: phoneNational,    // local digits, easier to dial
-      case: CASE_LABELS[formData.case] || formData.case,
-      company: formData.company.trim(),
+      phone: phoneIntl,
+      phone_national: phoneNational,
+      case_type: CASE_LABELS[formData.case] || formData.case,
+      company: formData.company.trim() || "Not Provided",
+      submitted_at: new Date().toISOString(),
       honeypot: formData.website,
     };
 
