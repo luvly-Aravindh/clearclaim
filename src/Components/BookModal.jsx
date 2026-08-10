@@ -32,7 +32,7 @@ const TIDYCAL_BOOKING_URL = "https://tidycal.com/meetclearclaim/strategy-call";
    devtools. The origin lock is what keeps that survivable.
    ===================================================================== */
 const DESK_URL = "https://deskbackend.getnos.io/v1/lead";
-const DESK_API_KEY = "lh_7a-fckZfKIe9xXyO7pdnv2JT0yvVF8tDGrKWZ-R6lI4";
+const DESK_API_KEY = "lh_0I2Q-4qnyaoxyqz6UNOd-8b5ooTE5ahcS_Dirj5rrkE";
 const LEAD_SOURCE = "clearclaim-lp";
 
 /* In a dev build the redirect is held and the real Desk error is shown,
