@@ -18,20 +18,30 @@ import Guarantee from "./Components/Guarantee";
 import Testimonials from "./Components/Testimonials";
 import FinalCTA from "./Components/FinalCTA";
 import Footer from "./Components/Footer";
-import BookModal from "./Components/BookModal";
 import ProofTicker from "./Components/ProofTicker";
 
-function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const AUDIT_FORM_URL = "/audit-form";
 
+function goToAuditForm(lead) {
+  const q = new URLSearchParams();
+  if (lead?.email) q.set("email", lead.email);
+  if (lead?.whatsapp) {
+    const digits = String(lead.whatsapp).replace(/\D/g, "");
+    if (digits) q.set("phone", digits.slice(-10));
+  }
+  if (lead?.name) q.set("name", lead.name);
+  const qs = q.toString();
+  window.location.href = AUDIT_FORM_URL + (qs ? `?${qs}` : "");
+}
+
+function App() {
   // ClearClaimLanding (the opt-in gate) is the entry point on every page
   // load. The landing page is reached only by submitting the opt-in (the
   // funnel functionality), so a refresh always returns to the opt-in gate.
   const [view, setView] = useState("optin");
   const [lead, setLead] = useState(() => loadLead());
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openAudit = () => goToAuditForm(lead);
 
   const handleOptinComplete = (submittedLead) => {
     setLead(submittedLead);
@@ -39,16 +49,16 @@ function App() {
     window.scrollTo(0, 0);
   };
 
-  // Opt-in Page -> Landing Page -> Book a Call (TidyCal)
+  // Opt-in Page -> Landing Page -> Audit form -> Book a Call (TidyCal)
   if (view === "landing") {
     return <ClearClaimLanding onComplete={handleOptinComplete} />;
   }
 
   return (
     <>
-      <TopBar onOpenModal={openModal} />
+      <TopBar onOpenModal={openAudit} />
 
-      <HeroSection onOpenModal={openModal} />
+      <HeroSection onOpenModal={openAudit} />
 
       <ProofBar />
 
@@ -64,7 +74,7 @@ function App() {
           "Most families finish submission in under 2 minutes",
         ]}
         bg="bg-white"
-        onOpenModal={openModal}
+        onOpenModal={openAudit}
       />
 
       <Checklist />
@@ -73,7 +83,7 @@ function App() {
         label="Submit My Certificate Details Now"
         bullets={["Free", "2 minutes", "No commitment"]}
         bg="bg-white"
-        onOpenModal={openModal}
+        onOpenModal={openAudit}
       />
 
       <SplitSectionThree />
@@ -84,10 +94,10 @@ function App() {
         label="Speak With A Recovery Specialist"
         bullets={["Free valuation", "No originals required"]}
         bg="bg-white"
-        onOpenModal={openModal}
+        onOpenModal={openAudit}
       />
 
-      <ThreeSteps onOpenModal={openModal} />
+      <ThreeSteps onOpenModal={openAudit} />
 
       <Guarantee />
 
@@ -95,18 +105,16 @@ function App() {
         label="Get Your Free Valuation"
         bullets={["Zero risk", "No commitment"]}
         bg="bg-white"
-        onOpenModal={openModal}
+        onOpenModal={openAudit}
       />
 
       <Testimonials />
 
-      <FinalCTA onOpenModal={openModal} />
+      <FinalCTA onOpenModal={openAudit} />
 
-      <Footer onOpenModal={openModal} />
+      <Footer onOpenModal={openAudit} />
 
       <ProofTicker />
-
-      <BookModal isOpen={isModalOpen} onClose={closeModal} prefill={lead} />
     </>
   );
 }
