@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClearClaim | Free Share Recovery Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Add the same Meta Pixel as the live LP here. Note: live LP init ID (1826615968297626) does not match its noscript ID (1597177845366294). [VERIFY] -->
+<style>
+:root{
+  --green:#00BE5D; --green-d:#00A04E; --navy:#161D34; --lg:#D4EFD5; --sg:#EAF7E9;
+  --blue:#678EF0; --yellow:#FEB066; --red:#EC7D8C; --ink2:#4A5268; --line:#E2E7EE;
+  --sans:'Archivo','Noto Sans Devanagari',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--navy);background:#fff;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+html[lang="hi"] body{font-size:18px;line-height:1.72}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:8px}
+h1:focus{outline:none}
+
+/* header */
+.top{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:19px;letter-spacing:-.01em;white-space:nowrap}
+.brand img.logo{height:40px;width:auto;display:block;flex:none}
+.brand small{font-weight:600;font-size:13px;color:#AEB8CE;letter-spacing:0;border-left:1px solid rgba(255,255,255,.2);padding-left:12px}
+.slots{margin-left:auto;font-family:var(--mono);font-size:12.5px;display:flex;align-items:center;gap:8px;color:#C9D1E3}
+.slots b{color:var(--yellow)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,190,93,.6)}70%{box-shadow:0 0 0 9px rgba(0,190,93,0)}100%{box-shadow:0 0 0 0 rgba(0,190,93,0)}}
+.lang{display:flex;border:1px solid rgba(255,255,255,.25);border-radius:999px;overflow:hidden;flex:none}
+.lang button{padding:5px 11px;font-size:13px;font-weight:700;color:#C9D1E3}
+.lang button[aria-pressed="true"]{background:var(--green);color:var(--navy)}
+.bar{height:5px;background:rgba(255,255,255,.12)}
+.bar i{display:block;height:100%;width:0;background:var(--green);transition:width .45s ease}
+@media(max-width:640px){.brand small{display:none}.slots span.t{display:none}}
+
+/* layout */
+.wrap{max-width:1180px;margin:0 auto;padding:44px 20px 140px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:64px;align-items:start}
+.stage{max-width:640px;min-height:60vh}
+@media(max-width:960px){.wrap{grid-template-columns:1fr;padding-top:28px}.file{display:none}}
+
+.meta{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin-bottom:12px}
+.q{font-weight:800;font-size:clamp(27px,3.6vw,40px);line-height:1.14;letter-spacing:-.02em;text-wrap:balance}
+html[lang="hi"] .q{letter-spacing:0;line-height:1.38}
+.sub{color:var(--ink2);margin-top:12px;max-width:58ch}
+
+/* options */
+.opts{display:grid;gap:12px;margin-top:26px}
+.opt{display:flex;align-items:center;gap:14px;text-align:left;width:100%;padding:16px 18px;border:2px solid var(--line);border-radius:14px;background:#fff;font-weight:600;transition:border-color .15s,background .15s}
+.opt:hover{border-color:#B9C3D3}
+.opt .k{flex:none;width:30px;height:30px;border-radius:8px;border:1.5px solid var(--line);display:grid;place-items:center;font-family:var(--mono);font-size:13px;color:var(--ink2)}
+.opt[aria-pressed="true"]{border-color:var(--green);background:var(--sg)}
+.opt[aria-pressed="true"] .k{background:var(--green);border-color:var(--green);color:#fff}
+.opt .tick{margin-left:auto;opacity:0;color:var(--green-d);font-weight:900}
+.opt[aria-pressed="true"] .tick{opacity:1}
+
+/* inputs */
+.field{display:block;margin-top:18px}
+.field > span{display:block;font-weight:700;font-size:15px;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:15px 16px;border:2px solid var(--line);border-radius:12px;font:inherit;color:var(--navy);background:#fff}
+.field textarea{min-height:120px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px rgba(103,142,240,.18)}
+.phone{display:flex}
+.phone select{width:auto;border-radius:12px 0 0 12px;border-right:0;background:var(--sg);font-weight:700}
+.phone input{border-radius:0 12px 12px 0}
+.err{color:#B8374D;font-size:14px;margin-top:6px;font-weight:600}
+.err:empty{display:none}
+.link{font-weight:700;color:var(--blue);text-decoration:underline;text-underline-offset:3px;margin-top:14px;display:inline-block}
+
+/* slider */
+.val{font-weight:900;font-size:clamp(42px,7vw,66px);letter-spacing:-.03em;margin-top:26px;font-variant-numeric:tabular-nums;line-height:1}
+.val-w{font-family:var(--mono);font-size:13px;color:var(--ink2);margin-top:8px}
+input[type=range]{width:100%;accent-color:var(--green);margin-top:18px;height:30px}
+.ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.val.unk{font-size:clamp(26px,4vw,34px);color:var(--green-d)}
+
+/* good to know */
+.gtk{margin-top:28px;padding:16px 18px;background:var(--sg);border-radius:12px;border-left:4px solid var(--green)}
+.lbl{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--green-d);margin-bottom:4px}
+.gtk p:last-child{font-size:15.5px}
+
+/* nav + CTA */
+.nav{display:flex;align-items:center;flex-wrap:wrap;gap:12px 18px;margin-top:28px}
+.back{font-weight:700;color:var(--ink2);padding:10px 4px}
+.back:hover{color:var(--navy)}
+.cta{position:relative;overflow:hidden;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;padding:17px 34px;border-radius:999px;font-weight:800;font-size:18px;color:#fff;text-decoration:none;
+  background:linear-gradient(180deg,#19D878 0%,var(--green) 52%,#00A852 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(0,0,0,.12),0 12px 26px -10px rgba(0,190,93,.75)}
+.cta::before{content:"";position:absolute;inset:0 0 50% 0;background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,0));border-radius:999px 999px 0 0;z-index:-1}
+.cta::after{content:"";position:absolute;top:-50%;left:-60%;width:38%;height:200%;background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.55),rgba(255,255,255,0));transform:rotate(18deg);animation:shine 3.2s ease-in-out infinite;pointer-events:none}
+@keyframes shine{0%{left:-60%}55%,100%{left:130%}}
+.cta:hover{filter:brightness(1.04)}
+.cta.big{padding:20px 40px;font-size:19px}
+
+/* intro */
+.intro-proof{display:flex;align-items:center;gap:10px;margin-top:22px;font-size:15px;color:var(--ink2)}
+.intro-proof svg{flex:none}
+.note{font-size:14.5px;color:var(--ink2);margin-top:14px}
+.pts{list-style:none;margin-top:14px;display:grid;gap:8px}
+.pts li{position:relative;padding-left:32px;font-weight:600}
+.pts li::before{content:"";position:absolute;left:0;top:3px;width:21px;height:21px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.6 2.6L12 5.6' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat}
+html[lang="hi"] .pts li::before{top:6px}
+.rm-t{margin-top:34px}
+.route-map{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.flow{list-style:none;display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.flow li{font-size:13.5px;font-weight:700;padding:5px 12px;border-radius:999px;background:#F1F3F7;color:var(--ink2)}
+.flow li.done{background:var(--sg);color:var(--green-d)}
+.flow li.now{background:var(--navy);color:#fff}
+.booked{display:flex;align-items:center;justify-content:center;margin-top:14px;padding:14px;border:2px dashed var(--green);border-radius:12px;font-weight:800;color:var(--green-d);text-decoration:none;text-align:center}
+.booked:hover{background:var(--sg)}
+.route-map div{background:var(--sg);border-radius:12px;padding:14px}
+.route-map b{display:block;font-size:15px}
+.route-map span{font-size:13.5px;color:var(--ink2);line-height:1.45;display:block;margin-top:4px}
+@media(max-width:560px){.route-map{grid-template-columns:1fr}}
+
+/* case file */
+.file{position:sticky;top:104px}
+.fc{background:var(--sg);border:1px solid var(--lg);border-radius:4px 18px 18px 18px;padding:24px 22px 20px;position:relative;margin-top:14px}
+.fc::before{content:"";position:absolute;top:-15px;left:-1px;width:128px;height:16px;background:var(--sg);border:1px solid var(--lg);border-bottom:0;border-radius:10px 10px 0 0}
+.fc h2{font-size:18px;font-weight:800}
+.fc .id{font-family:var(--mono);font-size:12.5px;color:var(--ink2);margin-top:2px}
+.fc dl{margin-top:16px}
+.fc .row{display:grid;grid-template-columns:118px 1fr;gap:10px;padding:10px 0;border-top:1px dashed #BFDCC2;font-size:14.5px;line-height:1.45}
+.fc dt{color:var(--ink2)}
+.fc dd{font-weight:700;word-break:break-word}
+.fc dd.p{font-weight:500;color:#9AA3B5}
+.fc .foot{font-size:13px;color:var(--ink2);margin-top:12px}
+.stamp{position:absolute;right:14px;top:16px;transform:rotate(-9deg) scale(1.7);opacity:0;border:3px solid var(--green);color:var(--green-d);font-weight:900;padding:3px 10px;border-radius:8px;font-size:14px;background:rgba(255,255,255,.6);transition:transform .4s cubic-bezier(.2,.9,.3,1.35),opacity .25s}
+.stamp.on{opacity:1;transform:rotate(-9deg) scale(1)}
+.file-inline{display:none;margin-top:26px}
+@media(max-width:960px){.file-inline{display:block}}
+
+/* loader */
+.load{margin-top:26px;display:grid;gap:14px}
+.load li{list-style:none;display:flex;align-items:center;gap:12px;font-weight:600;opacity:.35;transition:opacity .3s}
+.load li.on{opacity:1}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--lg);border-top-color:var(--green);animation:spin .8s linear infinite;flex:none}
+.load li.done .spin{animation:none;border-color:var(--green);background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.6 2.6L12 5.6' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* result */
+.route{margin-top:24px;background:var(--navy);color:#fff;border-radius:16px;padding:18px 20px}
+.route .lbl{color:var(--green)}
+.route .v{font-weight:800;font-size:21px;line-height:1.35}
+.route .n{font-size:14px;color:#AEB8CE;margin-top:4px}
+.cal{margin-top:22px;border:2px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.cal iframe{width:100%;height:760px;border:0;display:block}
+.calfb{display:inline-block;margin-top:10px;font-size:14.5px;font-weight:700;color:var(--blue)}
+.ready{margin-top:26px;padding:18px 20px;border:2px solid var(--lg);border-radius:14px}
+.ready ul{list-style:none;margin-top:6px}
+.ready li{padding:7px 0 7px 28px;position:relative;font-size:15.5px}
+.ready li::before{content:"";position:absolute;left:2px;top:12px;width:16px;height:16px;border-radius:5px;border:2px solid var(--green)}
+
+/* proof ticker */
+.proof{position:fixed;left:18px;bottom:18px;z-index:30;display:flex;align-items:center;gap:12px;background:#fff;border-radius:999px;padding:8px 20px 8px 8px;border:1px solid var(--line);box-shadow:0 14px 34px -12px rgba(22,29,52,.38);transform:translateX(calc(-100% - 30px));transition:transform .55s cubic-bezier(.2,.8,.2,1);max-width:calc(100vw - 36px)}
+.proof.in{transform:none}
+.proof svg.av{width:44px;height:44px;flex:none}
+.proof .tx{line-height:1.3;min-width:0}
+.proof .nm{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.proof .ac{font-size:13.5px;color:var(--ink2)}
+.proof .ts{font-size:12px;color:#8A93A7;display:flex;align-items:center;gap:5px;margin-top:1px}
+.proof .ts b{color:var(--blue);font-weight:700}
+
+/* exit modal */
+.modal{position:fixed;inset:0;background:rgba(22,29,52,.62);display:none;place-items:center;z-index:50;padding:20px}
+.modal.open{display:grid}
+.modal-card{background:#fff;border-radius:22px;padding:34px 30px 26px;max-width:460px;text-align:center}
+.modal-card h2{font-weight:800;font-size:26px;line-height:1.25}
+html[lang="hi"] .modal-card h2{line-height:1.45}
+.modal-card p{color:var(--ink2);margin-top:10px}
+.modal-card .nav{justify-content:center}
+
+/* JetBrains Mono has no Devanagari: Hindi labels fall back to the sans stack */
+html[lang="hi"] .slots,html[lang="hi"] .meta,html[lang="hi"] .val-w,html[lang="hi"] .ticks,html[lang="hi"] .lbl{font-family:var(--sans);letter-spacing:0}
+html[lang="hi"] .lbl{font-size:13.5px}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bcheck" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#678EF0"/><path d="m4.6 8.3 2.2 2.2 4.6-4.8" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><img class="logo" src="data:image/png;base64,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" alt="ClearClaim" width="96" height="40"><small id="brandTag"></small></div>
+    <div class="slots"><i class="dot"></i><span id="slots"></span></div>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+</header>
+
+<main class="wrap">
+  <section class="stage" id="stage" aria-live="polite"></section>
+  <aside class="file" id="file" aria-label="Case file"></aside>
+</main>
+
+<div class="proof" id="proof" aria-hidden="true"></div>
+
+<div class="modal" id="exit" role="dialog" aria-modal="true" aria-labelledby="exitT">
+  <div class="modal-card">
+    <h2 id="exitT"></h2>
+    <p id="exitS"></p>
+    <div class="nav"><button class="cta" id="exitGo"></button><button class="back" id="exitNo"></button></div>
+  </div>
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+/* English-only audit funnel. Flow: /audit-form → questions → TidyCal booking → /thankyou */
+const CONFIG = {
+  DEMO_MODE: false,
+  LEAD_ENDPOINT: "https://deskbackend.getnos.io/v1/lead",
+  LEAD_TOKEN: "lh_0I2Q-4qnyaoxyqz6UNOd-8b5ooTE5ahcS_Dirj5rrkE",
+  LEAD_SOURCE: "clearclaim-audit",
+  DESK_SUBJECT: "New Valuation Lead Received - Clearclaim",
+  TIDYCAL_URL: "https://tidycal.com/meetclearclaim/strategy-call",
+  VALUE_FLOOR: 50000,
+  SLOTS_OPEN: 3,
+  ROADMAP_URL: "#roadmap",
+  THANKYOU_URL: "/thankyou"
+};
+
+/* ============ COPY ============ */
+const T = {
+en:{
+  docTitle:"ClearClaim | Free Share Recovery Audit",
+  brandTag:"Free recovery audit",
+  slots:n=>`<b>${n}</b> <span class="t">valuation</span> slots left today`,
+  introQ:"Find out if your family's old shares can be recovered.",
+  introSub:"9 quick questions. About 2 minutes. At the end you'll know:",
+  introPts:["Which of the 3 claim routes fits your case","Whether your shares may have moved to IEPF","If your case qualifies, a free valuation call with a recovery specialist"],
+  routesT:"◆ Every case falls into one of three routes",
+  flow:["Audit done","Book your call","Valuation call"],
+  bookedLink:"Booked your slot? See what happens next",
+  calTitle:"Book your valuation call",
+  introCta:"Start my free audit",
+  introNote:"No original documents needed to start.",
+  introProof:"1,250 families helped across 22 states",
+  routes3:[["IEPF claim","Shares moved to the government fund after 7 years of unclaimed dividends."],["Registrar route","Paper certificates converted to demat through the company's RTA."],["Legal heir claim","Shares of a holder who passed away, moved to family."]],
+  stepOf:(i,n)=>`Question ${i} of ${n}`,
+  back:"Back", next:"Continue", gtk:"◆ Good to know", optional:"Optional",
+  fName:"Your name", fPhone:"WhatsApp number", fEmail:"Email (optional)",
+  errName:"Enter your name so we know who to call.",
+  errPhone:"Enter a valid WhatsApp number, digits only.",
+  errEmail:"Check the email format, or leave it empty.",
+  errCompany:"Enter the company name, or tap 'I don't know the company name'.",
+  errDocs:"Pick at least one option.",
+  skipCompany:"I don't know the company name",
+  idk:"I have no idea of the value", idkBack:"Let me pick a rough value",
+  idkOn:"Not sure. We'll value it for you.",
+  lakh:"lakh", thousand:"thousand",
+  loadT:"Reviewing your details",
+  load:["Reading your answers","Choosing the likely claim route","Opening today's calendar"],
+  loadDq:"Preparing your next step",
+  qTitle:n=>`${n}, your case qualifies for a free valuation call.`,
+  qSub:"Pick a time below. Our recovery specialist will already have your case file, so the call starts with your shares, not with forms.",
+  routeLbl:"◆ Likely claim route", routeNote:"Confirmed on the call after a document check.",
+  calFb:"Calendar not loading? Open the booking page",
+  readyT:"◆ Keep these ready for the call",
+  ready:["A photo of the share certificate, if you have it","The folio number printed on the certificate","The company name as printed","Death certificate, if the holder has passed away"],
+  fileT:"Your case file", pending:"Pending", stamp:"Qualified",
+  fileFoot:"Your answers fill this file. Our specialist reads it before your call.",
+  rows:{holder:"Holder",status:"Status",company:"Company",value:"Est. value",docs:"Documents",start:"Start",route:"Likely route"},
+  unknownCo:"Not known yet", toValue:"To be valued", noneYet:"None yet", docsN:n=>`${n} available`,
+  roadmap:"Get the free Recovery Roadmap", retake:"Change my answers", copy:"Copy audit link", copied:"Link copied",
+  exitT:n=>`Your case file is ${n} question${n===1?"":"s"} from complete.`,
+  exitS:"Leave now and the shares stay in the cupboard. Finish in under a minute.",
+  exitGo:"Finish my audit", exitNo:"No thanks",
+  proofBy:"Verified by Proof", ago:m=>`${m} min ago`,
+  act:{booked:"booked a free valuation call",audit:"completed the recovery audit",roadmap:"got the Recovery Roadmap"},
+  dq:{
+    not_owner:["Only the holder or their family can start this claim.","Companies release shares only to the registered holder or their legal heirs. If you're helping someone, send them this audit so they can fill it in themselves."],
+    in_demat:["Good news. Your shares are already in demat.","Shares in a demat account you can access can be sold or moved through your broker. You don't need a recovery service for these. If you also have paper certificates, retake the audit for those."],
+    low_value:["At this value, recovery fees may take most of the amount.","We'd rather tell you now than on a call. Our free Recovery Roadmap shows you how to file the claim yourself, step by step."],
+    no_intent:["No rush. Take the roadmap and come back when you're ready.","Our free Recovery Roadmap explains the three claim routes, the documents each one needs, and where families usually get stuck."],
+    no_commit:["No problem. Here's everything in writing.","Our free Recovery Roadmap explains the three claim routes, the documents each one needs, and where families usually get stuck."]
+  },
+  route:{iepf_heir:"Legal heir claim from IEPF (Form IEPF-5)",iepf:"IEPF claim (Form IEPF-5)",heir:"Legal heir transmission",rta:"Registrar route: certificate to demat",tbd:"To be confirmed on the call"}
+},
+hi:{
+  docTitle:"ClearClaim | फ्री शेयर रिकवरी ऑडिट",
+  brandTag:"फ्री रिकवरी ऑडिट",
+  slots:n=>`आज सिर्फ़ <b>${n}</b> <span class="t">वैल्यूएशन</span> स्लॉट बचे हैं`,
+  introQ:"जानिए आपके परिवार के पुराने शेयर वापस मिल सकते हैं या नहीं।",
+  introSub:"9 आसान सवाल। लगभग 2 मिनट। आखिर में आपको पता होगा:",
+  introPts:["आपका केस 3 में से किस क्लेम रास्ते में आता है","आपके शेयर IEPF में गए हैं या नहीं","केस योग्य हो, तो रिकवरी विशेषज्ञ के साथ फ्री वैल्यूएशन कॉल"],
+  routesT:"◆ हर केस इन तीन में से किसी एक रास्ते में आता है",
+  flow:["ऑडिट पूरा","कॉल बुक करें","वैल्यूएशन कॉल"],
+  bookedLink:"स्लॉट बुक कर लिया? आगे क्या होगा, देखें",
+  calTitle:"अपनी वैल्यूएशन कॉल बुक करें",
+  introCta:"मेरा फ्री ऑडिट शुरू करें",
+  introNote:"शुरू करने के लिए असली कागज़ों की ज़रूरत नहीं।",
+  introProof:"22 राज्यों के 1,250 परिवारों की मदद",
+  routes3:[["IEPF क्लेम","7 साल तक डिविडेंड न लेने पर शेयर सरकारी फंड में चले जाते हैं।"],["RTA का रास्ता","कंपनी के रजिस्ट्रार के ज़रिए कागज़ी सर्टिफिकेट को डीमैट में बदलना।"],["कानूनी वारिस क्लेम","जिनका निधन हो चुका है, उनके शेयर परिवार के नाम करना।"]],
+  stepOf:(i,n)=>`सवाल ${i} / ${n}`,
+  back:"पीछे", next:"आगे बढ़ें", gtk:"◆ जानने लायक बात", optional:"ज़रूरी नहीं",
+  fName:"आपका नाम", fPhone:"WhatsApp नंबर", fEmail:"ईमेल (ज़रूरी नहीं)",
+  errName:"अपना नाम लिखें, ताकि हमें पता हो किसे कॉल करना है।",
+  errPhone:"सही WhatsApp नंबर लिखें, सिर्फ़ अंक।",
+  errEmail:"ईमेल का फ़ॉर्मेट जाँचें, या इसे खाली छोड़ दें।",
+  errCompany:"कंपनी का नाम लिखें, या 'मुझे कंपनी का नाम नहीं पता' चुनें।",
+  errDocs:"कम से कम एक विकल्प चुनें।",
+  skipCompany:"मुझे कंपनी का नाम नहीं पता",
+  idk:"मुझे कीमत का बिल्कुल अंदाज़ा नहीं", idkBack:"मोटा अंदाज़ा चुनता/चुनती हूँ",
+  idkOn:"पता नहीं। कीमत हम निकालेंगे।",
+  lakh:"लाख", thousand:"हज़ार",
+  loadT:"आपकी जानकारी जाँची जा रही है",
+  load:["आपके जवाब पढ़े जा रहे हैं","संभावित क्लेम का रास्ता चुना जा रहा है","आज का कैलेंडर खोला जा रहा है"],
+  loadDq:"आपके लिए अगला कदम तैयार हो रहा है",
+  qTitle:n=>`${n} जी, आपका केस फ्री वैल्यूएशन कॉल के लिए चुना गया है।`,
+  qSub:"नीचे अपना समय चुनें। हमारे रिकवरी विशेषज्ञ के पास आपकी केस फ़ाइल पहले से होगी, इसलिए कॉल सीधे आपके शेयरों से शुरू होगी, फॉर्म से नहीं।",
+  routeLbl:"◆ संभावित क्लेम का रास्ता", routeNote:"कागज़ों की जाँच के बाद कॉल पर पक्का होगा।",
+  calFb:"कैलेंडर नहीं खुल रहा? बुकिंग पेज खोलें",
+  readyT:"◆ कॉल के लिए ये तैयार रखें",
+  ready:["शेयर सर्टिफिकेट की फोटो, अगर है","फोलियो नंबर, जो सर्टिफिकेट पर छपा होता है","कंपनी का नाम, जैसा सर्टिफिकेट पर छपा है","मृत्यु प्रमाण पत्र, अगर शेयरधारक का निधन हो चुका है"],
+  fileT:"आपकी केस फ़ाइल", pending:"बाकी", stamp:"योग्य",
+  fileFoot:"आपके जवाब इस फ़ाइल में भरते हैं। कॉल से पहले हमारे विशेषज्ञ इसे पढ़ते हैं।",
+  rows:{holder:"शेयरधारक",status:"स्थिति",company:"कंपनी",value:"अनुमानित कीमत",docs:"दस्तावेज़",start:"शुरुआत",route:"संभावित रास्ता"},
+  unknownCo:"अभी पता नहीं", toValue:"कीमत निकालनी है", noneYet:"अभी कुछ नहीं", docsN:n=>`${n} उपलब्ध`,
+  roadmap:"फ्री रिकवरी रोडमैप लें", retake:"जवाब बदलें", copy:"ऑडिट का लिंक कॉपी करें", copied:"लिंक कॉपी हो गया",
+  exitT:n=>`आपकी केस फ़ाइल बस ${n} सवाल दूर है।`,
+  exitS:"अभी छोड़ेंगे तो शेयर अलमारी में ही रह जाएँगे। एक मिनट से कम में पूरा करें।",
+  exitGo:"मेरा ऑडिट पूरा करें", exitNo:"रहने दीजिए",
+  proofBy:"सत्यापित", ago:m=>`${m} मिनट पहले`,
+  act:{booked:"फ्री वैल्यूएशन कॉल बुक हुई",audit:"रिकवरी ऑडिट पूरा हुआ",roadmap:"रिकवरी रोडमैप डाउनलोड हुआ"},
+  dq:{
+    not_owner:["यह क्लेम सिर्फ़ शेयरधारक या उनका परिवार ही शुरू कर सकता है।","कंपनियाँ शेयर सिर्फ़ रजिस्टर्ड शेयरधारक या उनके कानूनी वारिसों को ही देती हैं। अगर आप किसी की मदद कर रहे हैं, तो यह ऑडिट उन्हें भेज दें ताकि वे खुद भर सकें।"],
+    in_demat:["अच्छी खबर। आपके शेयर पहले से डीमैट में हैं।","जिस डीमैट अकाउंट को आप चला सकते हैं, उसके शेयर आप अपने ब्रोकर से बेच या ट्रांसफर कर सकते हैं। इनके लिए रिकवरी सेवा की ज़रूरत नहीं। अगर कागज़ी सर्टिफिकेट भी हैं, तो उनके लिए ऑडिट दोबारा करें।"],
+    low_value:["इतनी रकम पर रिकवरी की फीस ज़्यादातर पैसा ले सकती है।","यह बात हम कॉल की बजाय अभी बता देना बेहतर समझते हैं। हमारा फ्री रिकवरी रोडमैप आपको खुद क्लेम फाइल करने का तरीका, स्टेप बाय स्टेप बताता है।"],
+    no_intent:["कोई जल्दी नहीं। रोडमैप ले जाइए, जब तैयार हों तब लौट आइए।","हमारा फ्री रिकवरी रोडमैप तीनों क्लेम रास्ते, हर रास्ते के ज़रूरी कागज़, और परिवार अक्सर कहाँ अटकते हैं, सब समझाता है।"],
+    no_commit:["कोई बात नहीं। सारी जानकारी लिखित में यहाँ है।","हमारा फ्री रिकवरी रोडमैप तीनों क्लेम रास्ते, हर रास्ते के ज़रूरी कागज़, और परिवार अक्सर कहाँ अटकते हैं, सब समझाता है।"]
+  },
+  route:{iepf_heir:"IEPF से कानूनी वारिस का क्लेम (फॉर्म IEPF-5)",iepf:"IEPF क्लेम (फॉर्म IEPF-5)",heir:"कानूनी वारिस को ट्रांसमिशन",rta:"RTA के ज़रिए: सर्टिफिकेट से डीमैट",tbd:"कॉल पर तय होगा"}
+}};
+
+/* ============ STEPS (5 hard disqualify points: relation, status, value, timing, commit) ============ */
+const STEPS = [
+ {id:"relation",type:"options",row:"holder",
+  q:{en:"Whose shares are these?",hi:"ये शेयर किसके नाम पर हैं?"},
+  sub:{en:"Pick the closest match.",hi:"जो सबसे करीब हो, वह चुनें।"},
+  opts:[
+   {v:"self",en:"Mine, in my own name",hi:"मेरे अपने नाम पर",s:{en:"Self",hi:"खुद"}},
+   {v:"deceased",en:"A parent or relative who has passed away",hi:"माता-पिता या किसी रिश्तेदार के, जिनका निधन हो चुका है",s:{en:"Legal heir",hi:"कानूनी वारिस"}},
+   {v:"living",en:"A living relative I'm helping",hi:"किसी जीवित रिश्तेदार के, जिनकी मैं मदद कर रहा/रही हूँ",s:{en:"Living relative",hi:"जीवित रिश्तेदार"}},
+   {v:"other",en:"Not family. I'm asking for someone else",hi:"परिवार के नहीं, मैं किसी और के लिए पूछ रहा/रही हूँ",dq:"not_owner"}
+  ],
+  gtk:{en:"Legal heirs can claim the shares of a holder who has passed away. This process is called transmission.",hi:"किसी शेयरधारक के निधन के बाद उनके कानूनी वारिस शेयरों पर दावा कर सकते हैं। इस प्रक्रिया को ट्रांसमिशन कहते हैं।"}},
+
+ {id:"status",type:"options",row:"status",
+  q:{en:"Where are the shares right now?",hi:"शेयर अभी किस रूप में हैं?"},
+  opts:[
+   {v:"paper",en:"Paper certificates at home",hi:"घर में कागज़ी सर्टिफिकेट के रूप में",s:{en:"Paper certificates",hi:"कागज़ी सर्टिफिकेट"}},
+   {v:"iepf",en:"Moved to IEPF (we got a letter or notice)",hi:"IEPF में ट्रांसफर हो गए (कंपनी का पत्र या नोटिस आया था)",s:{en:"In IEPF",hi:"IEPF में"}},
+   {v:"unsure",en:"Not sure",hi:"पक्का नहीं पता",s:{en:"Not sure",hi:"पता नहीं"}},
+   {v:"demat",en:"Already in a demat account I can access",hi:"पहले से मेरे डीमैट अकाउंट में हैं, जिसे मैं चला सकता/सकती हूँ",dq:"in_demat"}
+  ],
+  gtk:{en:"If dividends go unclaimed for 7 years in a row, the shares move to IEPF, a fund under the Ministry of Corporate Affairs. They can still be claimed back.",hi:"अगर लगातार 7 साल तक डिविडेंड क्लेम न हो, तो शेयर IEPF में चले जाते हैं। यह कॉर्पोरेट मामलों के मंत्रालय के तहत एक फंड है। वहाँ से भी शेयर वापस क्लेम किए जा सकते हैं।"}},
+
+ {id:"contact",type:"contact",
+  q:{en:"Where should we send your audit result?",hi:"आपका ऑडिट रिज़ल्ट कहाँ भेजें?"},
+  sub:{en:"We share your result on WhatsApp. No spam calls.",hi:"रिज़ल्ट हम WhatsApp पर भेजते हैं। कोई फालतू कॉल नहीं।"},
+  gtk:{en:"Most families start with just a photo of one certificate. You don't need the originals to begin.",hi:"ज़्यादातर परिवार सिर्फ़ एक सर्टिफिकेट की फोटो से शुरुआत करते हैं। शुरू करने के लिए असली कागज़ नहीं चाहिए।"}},
+
+ {id:"company",type:"text",row:"company",
+  q:{en:"Which company are the shares of?",hi:"शेयर किस कंपनी के हैं?"},
+  sub:{en:"Write the name as printed on the certificate. Add all of them if there's more than one.",hi:"सर्टिफिकेट पर जो नाम छपा है, वही लिखें। एक से ज़्यादा हों तो सब लिखें।"},
+  ph:{en:"Company name on the certificate",hi:"सर्टिफिकेट पर लिखा कंपनी का नाम"},
+  gtk:{en:"Many companies from the 80s and 90s have since been renamed or merged. Old certificates can still carry value in the new company.",hi:"80 और 90 के दशक की कई कंपनियों के नाम बदल चुके हैं या उनका विलय हो चुका है। पुराने सर्टिफिकेट की कीमत नई कंपनी में भी बनी रह सकती है।"}},
+
+ {id:"value",type:"slider",row:"value",
+  q:{en:"Roughly, what do you think the shares are worth today?",hi:"आपके अंदाज़े से आज इन शेयरों की कीमत कितनी होगी?"},
+  sub:{en:"A rough guess is fine. We verify the real number on the call.",hi:"मोटा अंदाज़ा काफ़ी है। असली रकम हम कॉल पर जाँचते हैं।"},
+  gtk:{en:"Splits and bonus issues over 30 years can multiply the number of shares. The count on the certificate is often not the real count.",hi:"30 साल में हुए स्प्लिट और बोनस से शेयरों की गिनती कई गुना हो सकती है। सर्टिफिकेट पर लिखी संख्या अक्सर असली संख्या नहीं होती।"}},
+
+ {id:"docs",type:"multi",row:"docs",
+  q:{en:"Which of these do you have?",hi:"इनमें से आपके पास क्या है?"},
+  sub:{en:"Tick all that apply. None is okay too.",hi:"जो-जो है, सब चुनें। कुछ नहीं है, तो भी चलेगा।"},
+  opts:[
+   {v:"orig",en:"Original share certificates",hi:"असली शेयर सर्टिफिकेट"},
+   {v:"copy",en:"Photocopy or photo of the certificates",hi:"सर्टिफिकेट की फोटोकॉपी या फोटो"},
+   {v:"folio",en:"Folio number or an old dividend letter",hi:"फोलियो नंबर या पुराना डिविडेंड पत्र"},
+   {v:"death",en:"Death certificate (if the holder passed away)",hi:"मृत्यु प्रमाण पत्र (अगर शेयरधारक का निधन हुआ है)"},
+   {v:"will",en:"Will or succession document",hi:"वसीयत या उत्तराधिकार का दस्तावेज़"},
+   {v:"none",en:"None of these yet",hi:"अभी इनमें से कुछ नहीं"}
+  ],
+  gtk:{en:"The folio number printed on the certificate is what lets the company's registrar (RTA) trace the holding.",hi:"सर्टिफिकेट पर छपा फोलियो नंबर ही कंपनी के रजिस्ट्रार (RTA) को शेयर ढूँढने में मदद करता है।"}},
+
+ {id:"timing",type:"options",row:"start",
+  q:{en:"When do you want to start the recovery?",hi:"आप रिकवरी कब शुरू करना चाहते हैं?"},
+  opts:[
+   {v:"week",en:"This week",hi:"इसी हफ़्ते"},
+   {v:"month",en:"This month",hi:"इसी महीने"},
+   {v:"quarter",en:"In the next 3 months",hi:"अगले 3 महीनों में"},
+   {v:"exploring",en:"Just exploring, no plans yet",hi:"बस जानकारी ले रहा/रही हूँ, अभी कोई प्लान नहीं",dq:"no_intent"}
+  ],
+  gtk:{en:"Since 1 April 2019, shares of listed companies can be transferred only in demat form. Paper certificates have to be converted first.",hi:"1 अप्रैल 2019 से लिस्टेड कंपनियों के शेयर सिर्फ़ डीमैट रूप में ही ट्रांसफर हो सकते हैं। कागज़ी सर्टिफिकेट को पहले डीमैट में बदलना पड़ता है।"}},
+
+ {id:"blocker",type:"textarea",
+  q:{en:"What has stopped your family from claiming these so far?",hi:"अब तक आपके परिवार ने ये शेयर क्लेम क्यों नहीं किए?"},
+  sub:{en:"One line is enough. It helps our specialist prepare.",hi:"एक लाइन काफ़ी है। इससे हमारे विशेषज्ञ कॉल की तैयारी कर पाते हैं।"},
+  ph:{en:"e.g. name mismatch, don't know where to start, company doesn't reply",hi:"जैसे: नाम में गलती, कहाँ से शुरू करें पता नहीं, कंपनी जवाब नहीं देती"},
+  gtk:{en:"A name spelling that doesn't match your ID proof is a common reason claims get stuck. It can be corrected.",hi:"सर्टिफिकेट और पहचान पत्र में नाम की स्पेलिंग अलग होना, क्लेम अटकने की एक आम वजह है। इसे ठीक करवाया जा सकता है।"}},
+
+ {id:"commit",type:"options",
+  q:{en:"The valuation call is a short call with a recovery specialist. Will you join at the time you book?",hi:"वैल्यूएशन कॉल हमारे रिकवरी विशेषज्ञ के साथ एक छोटी कॉल है। जो समय आप चुनेंगे, क्या उस पर कॉल से जुड़ेंगे?"},
+  opts:[
+   {v:"yes",en:"Yes, I'll join on time",hi:"हाँ, समय पर जुड़ूँगा/जुड़ूँगी"},
+   {v:"yes_docs",en:"Yes, and I'll keep my documents ready",hi:"हाँ, और अपने कागज़ भी तैयार रखूँगा/रखूँगी"},
+   {v:"no",en:"No, just send me information",hi:"नहीं, बस जानकारी भेज दीजिए",dq:"no_commit"}
+  ],
+  gtk:{en:"Only a few valuation slots open each day. A missed call means another family waits.",hi:"हर दिन कुछ ही वैल्यूएशन स्लॉट खुलते हैं। एक कॉल छूटने का मतलब है किसी और परिवार का इंतज़ार।"}}
+];
+
+const VALUES=[10000,25000,50000,75000,100000,200000,300000,500000,750000,1000000,2000000,3000000,5000000];
+
+/* [VERIFY] Placeholder activity for the demo only. Wire to real bookings before launch. */
+const PROOF=[
+ {n:{en:"Sunita K.",hi:"सुनीता के."},c:{en:"Pune, Maharashtra",hi:"पुणे, महाराष्ट्र"},a:"booked",m:3},
+ {n:{en:"Rakesh J.",hi:"राकेश जे."},c:{en:"Indore, Madhya Pradesh",hi:"इंदौर, मध्य प्रदेश"},a:"audit",m:7},
+ {n:{en:"Harish V.",hi:"हरीश वी."},c:{en:"Dubai, UAE (NRI)",hi:"दुबई, UAE (NRI)"},a:"booked",m:11},
+ {n:{en:"Kavita S.",hi:"कविता एस."},c:{en:"Jaipur, Rajasthan",hi:"जयपुर, राजस्थान"},a:"roadmap",m:17},
+ {n:{en:"Anil M.",hi:"अनिल एम."},c:{en:"Lucknow, Uttar Pradesh",hi:"लखनऊ, उत्तर प्रदेश"},a:"audit",m:23},
+ {n:{en:"Deepa N.",hi:"दीपा एन."},c:{en:"Ahmedabad, Gujarat",hi:"अहमदाबाद, गुजरात"},a:"booked",m:29},
+ {n:{en:"Farhan Q.",hi:"फरहान क्यू."},c:{en:"Kolkata, West Bengal",hi:"कोलकाता, पश्चिम बंगाल"},a:"audit",m:37}
+];
+
+/* ============ STATE ============ */
+const P=new URLSearchParams(location.search);
+const state={
+  lang:"en", // English only
+  view:"intro", i:0, a:{docs:[]}, dq:null, lock:false, optinSent:false, completeSent:false,
+  caseId:"CC-"+(10000+Math.floor(Math.random()*89999)),
+  src:P.get("src")||P.get("utm_source")||"direct"
+};
+// Prefill if the LP already captured these
+if(P.get("name")) state.a.name=P.get("name");
+if(P.get("email")) state.a.email=P.get("email");
+if(P.get("phone")) state.a.phone=P.get("phone").replace(/\D/g,"").slice(-10);
+
+const $=s=>document.querySelector(s);
+const t=k=>T[state.lang][k];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const inr=n=>"₹"+n.toLocaleString("en-IN")+(n===VALUES[VALUES.length-1]?"+":"");
+const words=n=>n>=100000?`${+(n/100000).toFixed(1)} ${t("lakh")}`:`${n/1000} ${t("thousand")}`;
+const optOf=(id,v)=>{const s=STEPS.find(x=>x.id===id);return s&&s.opts?s.opts.find(o=>o.v===v):null};
+const shortOf=(id)=>{const o=optOf(id,state.a[id]);if(!o)return null;return o.s?o.s[state.lang]:o[state.lang]};
+
+function routeKey(){
+  const a=state.a;
+  if(a.status==="iepf"&&a.relation==="deceased")return "iepf_heir";
+  if(a.status==="iepf")return "iepf";
+  if(a.relation==="deceased")return "heir";
+  if(a.status==="paper")return "rta";
+  return "tbd";
+}
+
+/* ============ RENDER ============ */
+function fileHTML(){
+  const a=state.a, R=t("rows"), done=state.view==="result"&&!state.dq;
+  let docs=null;
+  if(a.docsDone) docs=a.docs.includes("none")?t("noneYet"):t("docsN")(a.docs.length);
+  const rows=[
+    ["holder",shortOf("relation")],
+    ["status",shortOf("status")],
+    ["company",a.companySkip?t("unknownCo"):(a.company?esc(a.company):null)],
+    ["value",a.valueUnknown?t("toValue"):(a.value!=null&&a.valueDone?inr(a.value):null)],
+    ["docs",docs],
+    ["start",shortOf("timing")],
+    ["route",done?t("route")[routeKey()]:null]
+  ];
+  return `<div class="fc">
+    <span class="stamp ${done?"on":""}">${t("stamp")}</span>
+    <h2>${t("fileT")}</h2>
+    <p class="id">${state.caseId}${a.name?" | "+esc(a.name):""}</p>
+    <dl>${rows.map(([k,v])=>`<div class="row"><dt>${R[k]}</dt><dd class="${v?"":"p"}">${v||t("pending")}</dd></div>`).join("")}</dl>
+    <p class="foot">${t("fileFoot")}</p>
+  </div>`;
+}
+
+function introHTML(){
+  return `<h1 class="q" tabindex="-1">${t("introQ")}</h1>
+  <p class="sub">${t("introSub")}</p>
+  <ul class="pts">${t("introPts").map(x=>`<li>${x}</li>`).join("")}</ul>
+  <div class="nav"><button class="cta big" id="start">${t("introCta")}</button></div>
+  <p class="note">${t("introNote")}</p>
+  <div class="intro-proof"><svg width="18" height="18"><use href="#bcheck"/></svg>${t("introProof")}</div>
+  <p class="lbl rm-t">${t("routesT")}</p>
+  <div class="route-map">${t("routes3").map(r=>`<div><b>${r[0]}</b><span>${r[1]}</span></div>`).join("")}</div>`;
+}
+
+function stepHTML(){
+  const s=STEPS[state.i], L=state.lang, a=state.a;
+  let body="";
+  if(s.type==="options"){
+    body=`<div class="opts" role="group">${s.opts.map((o,k)=>`<button class="opt" data-v="${o.v}" aria-pressed="${a[s.id]===o.v}"><span class="k">${"ABCD"[k]}</span><span>${o[L]}</span><span class="tick">✓</span></button>`).join("")}</div>`;
+  }else if(s.type==="multi"){
+    body=`<div class="opts" role="group">${s.opts.map((o,k)=>`<button class="opt chk" data-v="${o.v}" aria-pressed="${a.docs.includes(o.v)}"><span class="k">${k+1}</span><span>${o[L]}</span><span class="tick">✓</span></button>`).join("")}</div><p class="err" id="err"></p>`;
+  }else if(s.type==="contact"){
+    body=`<label class="field"><span>${t("fName")}</span><input id="fName" autocomplete="name" value="${esc(a.name||"")}"></label>
+    <label class="field"><span>${t("fPhone")}</span><div class="phone"><select id="fCc" aria-label="Country code">${["+91","+971","+1","+44","+65","+61"].map(c=>`<option ${c===(a.cc||"+91")?"selected":""}>${c}</option>`).join("")}</select><input id="fPhone" inputmode="numeric" autocomplete="tel-national" value="${esc(a.phone||"")}"></div></label>
+    <label class="field"><span>${t("fEmail")}</span><input id="fEmail" type="email" autocomplete="email" value="${esc(a.email||"")}"></label>
+    <p class="err" id="err"></p>`;
+  }else if(s.type==="text"){
+    body=`<label class="field"><input id="fText" placeholder="${s.ph[L]}" value="${esc(a.company||"")}" aria-label="${s.q[L]}"></label>
+    <p class="err" id="err"></p><button class="link" id="skip">${t("skipCompany")}</button>`;
+  }else if(s.type==="textarea"){
+    body=`<label class="field"><span>${t("optional")}</span><textarea id="fArea" placeholder="${s.ph[L]}">${esc(a.blocker||"")}</textarea></label>`;
+  }else if(s.type==="slider"){
+    const idx=a.valueIdx!=null?a.valueIdx:4;
+    if(a.value==null)a.value=VALUES[idx];
+    body=a.valueUnknown
+      ?`<p class="val unk">${t("idkOn")}</p><button class="link" id="idk">${t("idkBack")}</button>`
+      :`<p class="val" id="valOut">${inr(VALUES[idx])}</p><p class="val-w" id="valW">${words(VALUES[idx])}</p>
+        <input type="range" id="fRange" min="0" max="${VALUES.length-1}" step="1" value="${idx}" aria-label="${s.q[L]}">
+        <div class="ticks"><span>${inr(VALUES[0])}</span><span>₹50 ${t("lakh")}+</span></div>
+        <button class="link" id="idk">${t("idk")}</button>`;
+  }
+  const needsNext=s.type!=="options";
+  return `<p class="meta">${t("stepOf")(state.i+1,STEPS.length)}</p>
+  <h1 class="q" tabindex="-1">${s.q[L]}</h1>${s.sub?`<p class="sub">${s.sub[L]}</p>`:""}
+  ${body}
+  <div class="nav">${needsNext?`<button class="cta" id="next">${t("next")}</button>`:""}<button class="back" id="back">${t("back")}</button></div>
+  ${s.gtk?`<aside class="gtk"><p class="lbl">${t("gtk")}</p><p>${s.gtk[L]}</p></aside>`:""}`;
+}
+
+function loaderHTML(){
+  const lines=[...t("load")]; if(state.dq)lines[2]=t("loadDq");
+  return `<h1 class="q" tabindex="-1">${t("loadT")}</h1><ul class="load" id="load">${lines.map(l=>`<li><i class="spin"></i>${l}</li>`).join("")}</ul>`;
+}
+
+function calUrl(){
+  const a=state.a, q=new URLSearchParams();
+  const phone=(a.cc||"+91")+(a.phone||"");
+  if(a.name)q.set("name",a.name);
+  if(a.email)q.set("email",a.email);
+  if(a.phone){
+    q.set("phone",phone);
+    q.set("no_phone",phone);
+    q.set("whatsapp",phone);
+  }
+  return CONFIG.TIDYCAL_URL+(q.toString()?"?"+q:"");
+}
+
+function tyUrl(){
+  const q=new URLSearchParams();
+  if(state.a.name)q.set("name",state.a.name);
+  q.set("case",state.caseId);
+  return CONFIG.THANKYOU_URL+(q.toString()?"?"+q:"");
+}
+function saveForThankYou(){
+  try{sessionStorage.setItem("ccAudit",JSON.stringify({name:state.a.name||"",case:state.caseId,lang:state.lang,route:routeKey()}));}catch(e){}
+}
+
+function resultHTML(){
+  if(state.dq){
+    const [h,b]=t("dq")[state.dq];
+    const primary=state.dq==="not_owner"
+      ?`<button class="cta" id="copyLink">${t("copy")}</button>`
+      :`<a class="cta" href="${CONFIG.ROADMAP_URL}" target="_blank" rel="noopener">${t("roadmap")}</a>`;
+    return `<h1 class="q" tabindex="-1">${h}</h1><p class="sub">${b}</p>
+    <div class="nav">${primary}<button class="back" id="retake">${t("retake")}</button></div>`;
+  }
+  const u=calUrl(), f=t("flow");
+  return `<ol class="flow"><li class="done">✓ ${f[0]}</li><li class="now">${f[1]}</li><li>${f[2]}</li></ol>
+  <p class="meta">${state.caseId}</p>
+  <h1 class="q" tabindex="-1">${t("qTitle")(esc(state.a.name||""))}</h1>
+  <p class="sub">${t("qSub")}</p>
+  <div class="route"><p class="lbl">${t("routeLbl")}</p><p class="v">${t("route")[routeKey()]}</p><p class="n">${t("routeNote")}</p></div>
+  <div class="file-inline">${fileHTML()}</div>
+  <div class="cal"><iframe src="${u}" title="${t("calTitle")}" loading="lazy"></iframe></div>
+  <a class="calfb" href="${u}" target="_blank" rel="noopener">${t("calFb")}</a>
+  <a class="booked" href="${tyUrl()}">${t("bookedLink")}</a>
+  <div class="ready"><p class="lbl">${t("readyT")}</p><ul>${t("ready").map(r=>`<li>${r}</li>`).join("")}</ul></div>`;
+}
+
+function render(focus=true){
+  document.documentElement.lang=state.lang;
+  document.title=t("docTitle");
+  $("#brandTag").textContent=t("brandTag");
+  $("#slots").innerHTML=t("slots")(CONFIG.SLOTS_OPEN);
+  const N=STEPS.length;
+  $("#bar").style.width=(state.view==="intro"?0:state.view==="step"?(state.i/N*100):100)+"%";
+  const st=$("#stage");
+  st.innerHTML=state.view==="intro"?introHTML():state.view==="step"?stepHTML():state.view==="loading"?loaderHTML():resultHTML();
+  $("#file").innerHTML=fileHTML();
+  if(focus){const h=st.querySelector("h1");if(h)h.focus({preventScroll:true});}
+}
+
+/* ============ FLOW ============ */
+function go(i){state.i=i;state.view="step";render();window.scrollTo({top:0,behavior:"smooth"});}
+function advance(){state.lock=false; if(state.i<STEPS.length-1)go(state.i+1); else finish(null);}
+function back(){ if(state.view!=="step")return; if(state.i===0){state.view="intro";render();} else go(state.i-1);}
+function err(m){const e=$("#err");if(e)e.textContent=m;}
+
+function pickOption(v){
+  if(state.lock)return; state.lock=true;
+  const s=STEPS[state.i]; state.a[s.id]=v;
+  document.querySelectorAll(".opt").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
+  $("#file").innerHTML=fileHTML();
+  const o=s.opts.find(x=>x.v===v);
+  setTimeout(()=>{state.lock=false; o.dq?finish(o.dq):advance();},280);
+}
+
+function toggleDoc(v){
+  let d=state.a.docs;
+  if(v==="none")d=d.includes("none")?[]:["none"];
+  else{d=d.filter(x=>x!=="none"); d=d.includes(v)?d.filter(x=>x!==v):[...d,v];}
+  state.a.docs=d;
+  document.querySelectorAll(".chk").forEach(b=>b.setAttribute("aria-pressed",d.includes(b.dataset.v)));
+  err("");
+}
+
+function next(){
+  const s=STEPS[state.i], a=state.a;
+  if(s.type==="contact"){
+    const n=$("#fName").value.trim(), ph=$("#fPhone").value.replace(/\D/g,""), cc=$("#fCc").value, em=$("#fEmail").value.trim();
+    if(n.length<2)return err(t("errName"));
+    if(cc==="+91"?ph.length!==10:(ph.length<7||ph.length>12))return err(t("errPhone"));
+    if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return err(t("errEmail"));
+    Object.assign(a,{name:n,phone:ph,cc,email:em});
+    if(!state.optinSent){state.optinSent=true; sendLead("audit_optin"); track("Lead");}
+    return advance();
+  }
+  if(s.type==="text"){
+    const v=$("#fText").value.trim();
+    if(!v)return err(t("errCompany"));
+    a.company=v;a.companySkip=false;return advance();
+  }
+  if(s.type==="slider"){
+    a.valueDone=true;
+    if(!a.valueUnknown&&a.value<CONFIG.VALUE_FLOOR)return finish("low_value");
+    return advance();
+  }
+  if(s.type==="multi"){
+    if(!a.docs.length)return err(t("errDocs"));
+    a.docsDone=true;return advance();
+  }
+  if(s.type==="textarea"){a.blocker=$("#fArea").value.trim();return advance();}
+}
+
+function finish(dq){
+  state.dq=dq; state.view="loading"; render();
+  const li=[...document.querySelectorAll("#load li")];
+  li.forEach((el,k)=>{
+    setTimeout(()=>el.classList.add("on"),k*750);
+    setTimeout(()=>el.classList.add("done"),k*750+650);
+  });
+  setTimeout(()=>{
+    if(state.a.phone && !state.completeSent){
+      state.completeSent=true;
+      sendLead("audit_complete");
+    }
+    if(!dq){track("CompleteRegistration");saveForThankYou();}
+    state.view="result"; render(); window.scrollTo({top:0});
+  },li.length*750+300);
+}
+
+function reset(){
+  Object.assign(state,{view:"intro",i:0,dq:null,a:{docs:[],name:state.a.name,phone:state.a.phone,cc:state.a.cc,email:state.a.email}});
+  render();
+}
+
+/* ============ LEADS + PIXEL (Desk — audit form only) ============ */
+function label(id,v){const o=optOf(id,v);return o?o.en:(v||"");}
+async function sendLead(stage){
+  const a=state.a;
+  const utmFlat=Object.fromEntries([...P].filter(([k])=>k.startsWith("utm_")));
+  // Flat fields only — each answer is its own Desk/Sheet column. Never pack into "message".
+  const payload={
+    form:"audit",
+    subject:CONFIG.DESK_SUBJECT,
+    honeypot:"",
+    source:CONFIG.LEAD_SOURCE,
+    page:location.href,
+    stage,
+    case_id:state.caseId,
+    name:a.name||"",
+    phone:(a.cc||"+91")+(a.phone||""),
+    email:a.email||"",
+    relation:label("relation",a.relation),
+    status:label("status",a.status),
+    company:a.companySkip?"Unknown":(a.company||""),
+    estimated_value:a.valueUnknown?"Unknown":(a.valueDone?String(a.value):""),
+    documents:(a.docs||[]).map(v=>label("docs",v)).filter(Boolean).join(", "),
+    timing:label("timing",a.timing),
+    blocker:a.blocker||"",
+    commit:label("commit",a.commit),
+    likely_route:T.en.route[routeKey()],
+    qualified:stage==="audit_complete"?(state.dq?"no":"yes"):"",
+    dq_reason:state.dq||"",
+    lead_src:state.src,
+    submitted_at:new Date().toISOString(),
+    ...utmFlat
+  };
+  if(CONFIG.DEMO_MODE){console.info("[demo] lead not posted:",payload);return;}
+  try{
+    const res=await fetch(CONFIG.LEAD_ENDPOINT,{
+      method:"POST",
+      keepalive:true,
+      headers:{
+        "Content-Type":"application/json",
+        Authorization:"Bearer "+CONFIG.LEAD_TOKEN
+      },
+      body:JSON.stringify(payload)
+    });
+    const text=await res.text();
+    let data={};
+    try{data=text?JSON.parse(text):{};}catch{data={message:text};}
+    if(data.duplicate){console.info("[desk] audit lead duplicate (ok):",data);return;}
+    if(res.ok && data.status!=="error"){console.info("[desk] audit lead accepted:",data);return;}
+    console.error("[desk] AUDIT LEAD NOT SAVED. HTTP",res.status,data.message||text,data);
+  }catch(e){console.warn("[desk] audit lead post failed",e);}
+}
+function track(ev){ if(window.fbq) window.fbq("track",ev); }
+
+/* ============ EVENTS ============ */
+$("#stage").addEventListener("click",e=>{
+  const o=e.target.closest(".opt");
+  if(o){ o.classList.contains("chk")?toggleDoc(o.dataset.v):pickOption(o.dataset.v); return; }
+  const id=(e.target.closest("button")||{}).id;
+  if(id==="start")go(0);
+  else if(id==="next")next();
+  else if(id==="back")back();
+  else if(id==="retake")reset();
+  else if(id==="skip"){state.a.company="";state.a.companySkip=true;advance();}
+  else if(id==="idk"){state.a.valueUnknown=!state.a.valueUnknown;render(false);}
+  else if(id==="copyLink"){
+    const u=location.origin+"/audit-form";
+    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>{e.target.textContent=t("copied");}).catch(()=>{prompt("",u);});
+  }
+});
+$("#stage").addEventListener("input",e=>{
+  if(e.target.id==="fRange"){
+    const i=+e.target.value; state.a.valueIdx=i; state.a.value=VALUES[i];
+    $("#valOut").textContent=inr(VALUES[i]); $("#valW").textContent=words(VALUES[i]);
+  }
+});
+document.addEventListener("keydown",e=>{
+  if(state.view!=="step"||$("#exit").classList.contains("open"))return;
+  const s=STEPS[state.i], tag=(e.target.tagName||"").toLowerCase();
+  if(s.type==="options"&&!["input","textarea"].includes(tag)){
+    const k="abcd".indexOf(e.key.toLowerCase()), n="1234".indexOf(e.key), idx=k>-1?k:n;
+    if(idx>-1&&s.opts[idx]){e.preventDefault();pickOption(s.opts[idx].v);}
+  }else if(e.key==="Enter"&&tag!=="textarea"&&tag!=="button"){e.preventDefault();next();}
+});
+
+/* exit intent (desktop) */
+let exitShown=false;
+document.addEventListener("mouseout",e=>{
+  if(exitShown||e.relatedTarget||e.clientY>0||state.view!=="step")return;
+  exitShown=true;
+  const left=STEPS.length-state.i;
+  $("#exitT").textContent=t("exitT")(left); $("#exitS").textContent=t("exitS");
+  $("#exitGo").textContent=t("exitGo"); $("#exitNo").textContent=t("exitNo");
+  $("#exit").classList.add("open"); $("#exitGo").focus();
+});
+const closeExit=()=>$("#exit").classList.remove("open");
+$("#exitGo").onclick=closeExit; $("#exitNo").onclick=closeExit;
+$("#exit").addEventListener("click",e=>{if(e.target.id==="exit")closeExit();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeExit();});
+
+/* proof ticker */
+const GLOBE=`<svg class="av" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#EAF7E9"/><g fill="none" stroke="#00BE5D" stroke-width="1.6"><circle cx="21" cy="23" r="12"/><ellipse cx="21" cy="23" rx="5.5" ry="12"/><path d="M9 23h24M11 17h20M11 29h20"/></g><path d="M31 5.5c-3.1 0-5.4 2.4-5.4 5.3 0 4 5.4 9.4 5.4 9.4s5.4-5.4 5.4-9.4c0-2.9-2.3-5.3-5.4-5.3z" fill="#678EF0" stroke="#fff" stroke-width="1.5"/><circle cx="31" cy="10.7" r="2" fill="#fff"/></svg>`;
+let pi=0;
+function showProof(){
+  const p=PROOF[pi++%PROOF.length], L=state.lang, el=$("#proof");
+  el.innerHTML=`${GLOBE}<div class="tx"><p class="nm">${p.n[L]}, ${p.c[L]}</p><p class="ac">${T[L].act[p.a]}</p><p class="ts">${T[L].ago(p.m)} <svg width="12" height="12"><use href="#bcheck"/></svg><b>${T[L].proofBy}</b></p></div>`;
+  el.classList.add("in");
+  setTimeout(()=>el.classList.remove("in"),5200);
+}
+setTimeout(()=>{showProof();setInterval(showProof,11000);},4000);
+
+render(false);
+</script>
+</body>
+</html>
