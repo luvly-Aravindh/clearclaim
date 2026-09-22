@@ -191,7 +191,7 @@ html {
      MOBILE SAFETY NET
      Stops sideways scroll, makes media fluid, and lets flex/grid children
      shrink instead of forcing the page wider than the screen.
-     (Explicit Tailwind h-*/min-w-* classes still win over these.)
+     (Explicit Tailwind height / min-width utilities still win over these.)
      ============================================ */
   html, body { max-width: 100%; overflow-x: hidden; }
   img, video { max-width: 100%; height: auto; }
