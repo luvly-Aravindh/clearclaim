@@ -41,11 +41,21 @@ function copyHtmlPage(src, outRel) {
 // https://oldshares.clearclaim.in/
 export default defineConfig({
   base: "/",
+  server: {
+    port: 5180,
+    strictPort: true,
+    open: "/audit-form",
+  },
+  preview: {
+    port: 5180,
+    strictPort: true,
+  },
   plugins: [
     react(),
     {
       name: "static-html-routes",
       configureServer(server) {
+        // Register early so /audit-form and /thankyou win over the SPA fallback
         server.middlewares.use(serveStaticHtml());
       },
       configurePreviewServer(server) {

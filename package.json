@@ -6,6 +6,8 @@
   "homepage": "https://oldshares.clearclaim.in/",
   "scripts": {
     "dev": "vite",
+    "dev:lp": "vite --open /",
+    "dev:audit": "vite --open /audit-form",
     "build": "vite build",
     "preview": "vite preview"
   },
