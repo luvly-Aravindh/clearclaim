@@ -34,7 +34,7 @@ const TIDYCAL_BOOKING_URL = "https://tidycal.com/meetclearclaim/strategy-call";
 const DESK_URL = "https://deskbackend.getnos.io/v1/lead";
 const DESK_API_KEY = "lh_0I2Q-4qnyaoxyqz6UNOd-8b5ooTE5ahcS_Dirj5rrkE";
 const LEAD_SOURCE = "clearclaim-lp";
-const DESK_EMAIL_SUBJECT = "New Valuation Lead Received - Clearclaim";
+const DESK_EMAIL_SUBJECT = "New Audit Valuation Lead Received - Clearclaim";
 
 /* In a dev build the redirect is held and the real Desk error is shown,
    so a misconfiguration is impossible to miss. In production the visitor
