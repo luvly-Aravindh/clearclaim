@@ -437,7 +437,7 @@ const PROOF=[
 const P=new URLSearchParams(location.search);
 const state={
   lang:"en", // English only
-  view:"intro", i:0, a:{docs:[]}, dq:null, lock:false, optinSent:false, completeSent:false,
+  view:"intro", i:0, a:{docs:[]}, dq:null, lock:false, completeSent:false,
   caseId:"CC-"+(10000+Math.floor(Math.random()*89999)),
   src:P.get("src")||P.get("utm_source")||"direct"
 };
@@ -627,7 +627,8 @@ function next(){
     if(cc==="+91"?ph.length!==10:(ph.length<7||ph.length>12))return err(t("errPhone"));
     if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return err(t("errEmail"));
     Object.assign(a,{name:n,phone:ph,cc,email:em});
-    if(!state.optinSent){state.optinSent=true; sendLead("audit_optin"); track("Lead");}
+    // Contact step: pixel only — Desk waits until the full form is done
+    track("Lead");
     return advance();
   }
   if(s.type==="text"){
@@ -655,9 +656,10 @@ function finish(dq){
     setTimeout(()=>el.classList.add("done"),k*750+650);
   });
   setTimeout(()=>{
+    // Desk: ONE post only after the full audit is finished (with all answers).
     if(state.a.phone && !state.completeSent){
       state.completeSent=true;
-      sendLead("audit_complete");
+      sendLead();
     }
     if(!dq){track("CompleteRegistration");saveForThankYou();}
     state.view="result"; render(); window.scrollTo({top:0});
@@ -669,9 +671,9 @@ function reset(){
   render();
 }
 
-/* ============ LEADS + PIXEL (Desk — audit form only) ============ */
+/* ============ LEADS + PIXEL (Desk — one post after full form) ============ */
 function label(id,v){const o=optOf(id,v);return o?o.en:(v||"");}
-async function sendLead(stage){
+async function sendLead(){
   const a=state.a;
   const utmFlat=Object.fromEntries([...P].filter(([k])=>k.startsWith("utm_")));
   // Flat fields only — each answer is its own Desk/Sheet column. Never pack into "message".
@@ -681,7 +683,7 @@ async function sendLead(stage){
     honeypot:"",
     source:CONFIG.LEAD_SOURCE,
     page:location.href,
-    stage,
+    stage:"audit_complete",
     case_id:state.caseId,
     name:a.name||"",
     phone:(a.cc||"+91")+(a.phone||""),
@@ -695,7 +697,7 @@ async function sendLead(stage){
     blocker:a.blocker||"",
     commit:label("commit",a.commit),
     likely_route:T.en.route[routeKey()],
-    qualified:stage==="audit_complete"?(state.dq?"no":"yes"):"",
+    qualified:state.dq?"no":"yes",
     dq_reason:state.dq||"",
     lead_src:state.src,
     submitted_at:new Date().toISOString(),
