@@ -248,10 +248,10 @@ en:{
   routes3:[["IEPF claim","Shares moved to the government fund after 7 years of unclaimed dividends."],["Registrar route","Paper certificates converted to demat through the company's RTA."],["Legal heir claim","Shares of a holder who passed away, moved to family."]],
   stepOf:(i,n)=>`Question ${i} of ${n}`,
   back:"Back", next:"Continue", gtk:"◆ Good to know", optional:"Optional",
-  fName:"Your name", fPhone:"WhatsApp number", fEmail:"Email (optional)",
+  fName:"Your name", fPhone:"WhatsApp number", fEmail:"Email address",
   errName:"Enter your name so we know who to call.",
   errPhone:"Enter a valid WhatsApp number, digits only.",
-  errEmail:"Check the email format, or leave it empty.",
+  errEmail:"Please enter a valid email address.",
   errCompany:"Enter the company name, or tap 'I don't know the company name'.",
   errDocs:"Pick at least one option.",
   skipCompany:"I don't know the company name",
@@ -303,10 +303,10 @@ hi:{
   routes3:[["IEPF क्लेम","7 साल तक डिविडेंड न लेने पर शेयर सरकारी फंड में चले जाते हैं।"],["RTA का रास्ता","कंपनी के रजिस्ट्रार के ज़रिए कागज़ी सर्टिफिकेट को डीमैट में बदलना।"],["कानूनी वारिस क्लेम","जिनका निधन हो चुका है, उनके शेयर परिवार के नाम करना।"]],
   stepOf:(i,n)=>`सवाल ${i} / ${n}`,
   back:"पीछे", next:"आगे बढ़ें", gtk:"◆ जानने लायक बात", optional:"ज़रूरी नहीं",
-  fName:"आपका नाम", fPhone:"WhatsApp नंबर", fEmail:"ईमेल (ज़रूरी नहीं)",
+  fName:"आपका नाम", fPhone:"WhatsApp नंबर", fEmail:"ईमेल पता",
   errName:"अपना नाम लिखें, ताकि हमें पता हो किसे कॉल करना है।",
   errPhone:"सही WhatsApp नंबर लिखें, सिर्फ़ अंक।",
-  errEmail:"ईमेल का फ़ॉर्मेट जाँचें, या इसे खाली छोड़ दें।",
+  errEmail:"कृपया सही ईमेल पता लिखें।",
   errCompany:"कंपनी का नाम लिखें, या 'मुझे कंपनी का नाम नहीं पता' चुनें।",
   errDocs:"कम से कम एक विकल्प चुनें।",
   skipCompany:"मुझे कंपनी का नाम नहीं पता",
@@ -367,7 +367,7 @@ const STEPS = [
 
  {id:"contact",type:"contact",
   q:{en:"Where should we send your audit result?",hi:"आपका ऑडिट रिज़ल्ट कहाँ भेजें?"},
-  sub:{en:"We share your result on WhatsApp. No spam calls.",hi:"रिज़ल्ट हम WhatsApp पर भेजते हैं। कोई फालतू कॉल नहीं।"},
+  sub:{en:"We share your result on WhatsApp and email. No spam calls.",hi:"रिज़ल्ट हम WhatsApp और ईमेल पर भेजते हैं। कोई फालतू कॉल नहीं।"},
   gtk:{en:"Most families start with just a photo of one certificate. You don't need the originals to begin.",hi:"ज़्यादातर परिवार सिर्फ़ एक सर्टिफिकेट की फोटो से शुरुआत करते हैं। शुरू करने के लिए असली कागज़ नहीं चाहिए।"}},
 
  {id:"company",type:"text",row:"company",
@@ -625,9 +625,9 @@ function next(){
     const n=$("#fName").value.trim(), ph=$("#fPhone").value.replace(/\D/g,""), cc=$("#fCc").value, em=$("#fEmail").value.trim();
     if(n.length<2)return err(t("errName"));
     if(cc==="+91"?ph.length!==10:(ph.length<7||ph.length>12))return err(t("errPhone"));
-    if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return err(t("errEmail"));
+    if(!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return err(t("errEmail"));
     Object.assign(a,{name:n,phone:ph,cc,email:em});
-    // Contact step: pixel only — Desk waits until the full form is done
+    // Contact step: pixel only — Desk waits until they pass the full audit
     track("Lead");
     return advance();
   }
@@ -656,12 +656,13 @@ function finish(dq){
     setTimeout(()=>el.classList.add("done"),k*750+650);
   });
   setTimeout(()=>{
-    // Desk: ONE post only after the full audit is finished (with all answers).
-    if(state.a.phone && !state.completeSent){
+    // Desk: only when they PASS (qualified). No email for disqualified / incomplete data.
+    if(!dq && state.a.phone && state.a.email && !state.completeSent){
       state.completeSent=true;
       sendLead();
+      track("CompleteRegistration");
+      saveForThankYou();
     }
-    if(!dq){track("CompleteRegistration");saveForThankYou();}
     state.view="result"; render(); window.scrollTo({top:0});
   },li.length*750+300);
 }
@@ -676,7 +677,8 @@ function label(id,v){const o=optOf(id,v);return o?o.en:(v||"");}
 async function sendLead(){
   const a=state.a;
   const utmFlat=Object.fromEntries([...P].filter(([k])=>k.startsWith("utm_")));
-  // Flat fields only — each answer is its own Desk/Sheet column. Never pack into "message".
+  const orDash=(v)=> (v!=null && String(v).trim()!=="" ? String(v).trim() : "—");
+  // Flat fields — only called when they PASS, so answers should be complete.
   const payload={
     form:"audit",
     subject:CONFIG.DESK_SUBJECT,
@@ -685,20 +687,20 @@ async function sendLead(){
     page:location.href,
     stage:"audit_complete",
     case_id:state.caseId,
-    name:a.name||"",
-    phone:(a.cc||"+91")+(a.phone||""),
-    email:a.email||"",
-    relation:label("relation",a.relation),
-    status:label("status",a.status),
-    company:a.companySkip?"Unknown":(a.company||""),
-    estimated_value:a.valueUnknown?"Unknown":(a.valueDone?String(a.value):""),
-    documents:(a.docs||[]).map(v=>label("docs",v)).filter(Boolean).join(", "),
-    timing:label("timing",a.timing),
-    blocker:a.blocker||"",
-    commit:label("commit",a.commit),
-    likely_route:T.en.route[routeKey()],
-    qualified:state.dq?"no":"yes",
-    dq_reason:state.dq||"",
+    name:orDash(a.name),
+    phone:orDash((a.cc||"+91")+(a.phone||"")),
+    email:orDash(a.email),
+    relation:orDash(label("relation",a.relation)),
+    status:orDash(label("status",a.status)),
+    company:a.companySkip?"Unknown":orDash(a.company),
+    estimated_value:a.valueUnknown?"Unknown":(a.valueDone?String(a.value):"—"),
+    documents:orDash((a.docs||[]).map(v=>label("docs",v)).filter(Boolean).join(", ")),
+    timing:orDash(label("timing",a.timing)),
+    blocker:orDash(a.blocker),
+    commit:orDash(label("commit",a.commit)),
+    likely_route:orDash(T.en.route[routeKey()]),
+    qualified:"yes",
+    result:"PASSED — qualified for valuation call",
     lead_src:state.src,
     submitted_at:new Date().toISOString(),
     ...utmFlat
